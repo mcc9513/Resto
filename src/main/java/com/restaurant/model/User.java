@@ -14,6 +14,8 @@ public class User {
         this.role = role;
         this.hoursWorked = hoursWorked;
     }
+    public User() {};
+
     public int getId() {
         return id;
     }
