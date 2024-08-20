@@ -8,26 +8,33 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
-        <!-- JUnit 5 dependency for testing -->
+        <!-- JUnit 5 API, used for writing tests -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.9.1</version>
             <scope>test</scope>
         </dependency>
+        <!-- JUnit 5 Engine, used to run the tests -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.9.1</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Other dependencies can go here -->
+        <!-- Mockito for mocking in JUnit tests -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>4.5.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Add any additional dependencies your project needs here -->
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Compiler plugin to use Java 11 (or any other version) -->
+            <!-- Maven Compiler Plugin for specifying Java version -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -40,3 +47,6 @@
         </plugins>
     </build>
 </project>
+
+
+
