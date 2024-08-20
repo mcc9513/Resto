@@ -112,5 +112,8 @@ public class TableManagementPanel extends JPanel {
             data = newData;
             fireTableDataChanged();
         }
+
+        private void fireTableDataChanged() {
+        }
     }
 }

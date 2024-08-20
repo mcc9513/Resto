@@ -1,6 +1,7 @@
 package com.restaurant.ui;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +15,7 @@ public class TableManagementPanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Table setup
-        tableList = new JTable(new TableTableModel());
+        tableList = new JTable((TableModel) new TableTableModel());
         JScrollPane scrollPane = new JScrollPane(tableList);
 
         // Form setup

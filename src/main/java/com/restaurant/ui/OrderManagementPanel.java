@@ -1,6 +1,8 @@
 package com.restaurant.ui;
 
 import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 
 public class OrderManagementPanel extends JPanel {
@@ -11,7 +13,7 @@ public class OrderManagementPanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Table for orders
-        orderTable = new JTable(new OrderTableModel());
+        orderTable = new JTable((TableModel) new OrderTableModel());
         JScrollPane scrollPane = new JScrollPane(orderTable);
 
         // Buttons for order management

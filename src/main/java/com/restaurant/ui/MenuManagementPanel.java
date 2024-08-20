@@ -1,6 +1,7 @@
 package com.restaurant.ui;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import java.awt.*;
 
 public class MenuManagementPanel extends JPanel {
@@ -13,7 +14,7 @@ public class MenuManagementPanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Table setup
-        menuTable = new JTable(new MenuTableModel());
+        menuTable = new JTable((TableModel) new MenuTableModel());
         JScrollPane tableScrollPane = new JScrollPane(menuTable);
 
         // Form setup
