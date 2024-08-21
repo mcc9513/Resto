@@ -3,11 +3,11 @@ package com.restaurant.ui;
 import javax.swing.*;
 import java.awt.*;
 
-public class InventoryManagmentPanel extends JPanel {
+public class InventoryManagementPanel extends JPanel {
     private JTable inventoryTable;
     private JButton addButton, updateButton, deleteButton, mainButton, logOutButton;
 
-    public InventoryManagmentPanel() {
+    public InventoryManagementPanel() {
         setLayout(new BorderLayout());
 
         // Inventory Table | Code for the database will go here.

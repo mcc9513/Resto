@@ -21,7 +21,7 @@ public class RestaurantManagementSystem {
         // Create all the panels
         LoginPanel loginPanel = new LoginPanel();
         MainMenuPanel mainMenuPanel = new MainMenuPanel();
-        InventoryManagmentPanel inventoryPanel = new InventoryManagmentPanel();
+        InventoryManagementPanel inventoryPanel = new InventoryManagementPanel();
         OrderManagementPanel orderPanel = new OrderManagementPanel();
         MenuManagementPanel menuPanel = new MenuManagementPanel();
         ReportPanel reportPanel = new ReportPanel();
