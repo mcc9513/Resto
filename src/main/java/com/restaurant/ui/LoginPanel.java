@@ -2,6 +2,7 @@ package com.restaurant.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 public class LoginPanel extends JPanel {
     public JTextField usernameField;
@@ -21,9 +22,21 @@ public class LoginPanel extends JPanel {
         resetButton = new JButton("Reset");
         statusLabel = new JLabel("Please enter your credentials.");
 
-        // Load the image from the resources folder
-        ImageIcon logoIcon = new ImageIcon("/absolute/path/to/your/restologo.png");  // Use your actual absolute path
-        logoLabel = new JLabel(logoIcon);
+        // Load the image from the resources folder and resize it
+        URL imageUrl = getClass().getClassLoader().getResource("restologo.png");
+        if (imageUrl != null) {
+            ImageIcon logoIcon = new ImageIcon(imageUrl);
+
+            // Resize the image to fit the label (200x200 pixels as an example)
+            Image logoImage = logoIcon.getImage();  // Get the original image
+            Image resizedImage = logoImage.getScaledInstance(320, 320, Image.SCALE_SMOOTH);  // Resize the image
+            logoIcon = new ImageIcon(resizedImage);  // Create a new ImageIcon with the resized image
+
+            logoLabel = new JLabel(logoIcon);
+        } else {
+            logoLabel = new JLabel("Logo not found!");  // Fallback if the image isn't found
+            System.out.println("Image not found at specified path!");
+        }
 
         // Define layout constraints and add components
 
@@ -78,4 +91,5 @@ public class LoginPanel extends JPanel {
         add(statusLabel, gbc);
     }
 }
+
 
