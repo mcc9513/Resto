@@ -5,12 +5,12 @@ import java.awt.*;
 
 public class InventoryManagmentPanel extends JPanel {
     private JTable inventoryTable;
-    private JButton addButton, updateButton, deleteButton;
+    private JButton addButton, updateButton, deleteButton, mainButton, logOutButton;
 
     public InventoryManagmentPanel() {
         setLayout(new BorderLayout());
 
-        // Inventory Table
+        // Inventory Table | Code for the database will go here.
         String[] columns = {"Item Name", "Quantity", "Price"};
         Object[][] data = {
                 {"Apples", 100, "$1.00"},
@@ -24,9 +24,13 @@ public class InventoryManagmentPanel extends JPanel {
         addButton = new JButton("Add Item");
         updateButton = new JButton("Update Item");
         deleteButton = new JButton("Delete Item");
+        mainButton = new JButton("Home");
+        logOutButton = new JButton("Log Out");
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(mainButton);
+        buttonPanel.add(logOutButton);
 
         // Add components to panel
         add(tableScroll, BorderLayout.CENTER);
