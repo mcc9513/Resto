@@ -1,28 +1,48 @@
 package com.restaurant.model;
+import javax.persistence.*;
+import javax.persistence.Table;
 
+
+@Entity
+@Table(name = "Inventory")
 public class InventoryItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int itemId;
+
+    @Column(name = "itemName", nullable = false, unique = true)
     private String itemName;
-    private double quantity;
-    private double alertThreshold;
 
-    //Constructor
-    public InventoryItem(String itemName, double quantity, double alertThreshold) {
-        this.itemName = itemName;
-        this.quantity = quantity;
-        this.alertThreshold = alertThreshold;
+    @Column(name = "quantity", nullable = false)
+    private int quantity;
+
+    @Column(name = "threshold", nullable = false)
+    private int threshold;
+
+    @Column(name = "price", nullable = false)
+    private double price;
+
+    //Constructor changed to create new InventoryItem
+    public static InventoryItem InventoryItem(String itemName, int quantity, int threshold, double price) {
+        InventoryItem item = new InventoryItem();
+        item.setItemName(itemName);
+        item.setQuantity(quantity);
+        item.setThreshold(threshold);
+        item.setPrice(price);
+        return item;
     }
 
-    public InventoryItem() {
 
-    }
+    public InventoryItem() {}
 
     // Method to add stock
-    public void addStock(double amount) {
+    public void addStock(int amount) {
         this.quantity += amount;
     }
 
     // Method to reduce stock of the item.
-    public boolean reduceStock(double amount) {
+    public boolean reduceStock(int amount) {
         if (amount > this.quantity) {
             System.out.println("Insufficient Stock for " + itemName);
             return false;
@@ -33,7 +53,7 @@ public class InventoryItem {
     }
 
     private void checkThreshold() {
-        if (this.quantity <= this.alertThreshold) {
+        if (this.quantity <= this.threshold) {
             alertLowStock();
         }
     }
@@ -42,6 +62,8 @@ public class InventoryItem {
     private void alertLowStock() {
         System.out.println("Alert: Stock low for " + itemName + ". Current stock: " + quantity);
     }
+
+    public int getItemId() { return itemId; }
 
     public String getItemName() {
         return itemName;
@@ -55,15 +77,18 @@ public class InventoryItem {
         return quantity;
     }
 
-    public void setQuantity(double quantity) {
-        this.quantity = quantity;
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+
+    public double getThreshold() {
+        return threshold;
     }
 
-    public double getAlertThreshold() {
-        return alertThreshold;
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
     }
 
-    public void setAlertThreshold(double alertThreshold) {
-        this.alertThreshold = alertThreshold;
-    }
+    public double getPrice() { return price; }
+
+    private void setPrice(double price) { this.price = price; }
 }
+

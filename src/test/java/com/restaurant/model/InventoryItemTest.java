@@ -9,7 +9,7 @@ class InventoryItemTest {
 
     @BeforeEach
     void setUp() {
-        item = new InventoryItem("Flour", 100, 25);
+        item = new InventoryItem();
     }
 
     @Test
@@ -37,6 +37,6 @@ class InventoryItemTest {
         item.reduceStock(80); // This will bring the stock to 20, which is below the threshold of 25
         // You would need to mock or spy the alerting behavior to test this effectively.
         // Here we just check the quantity to see if it's below threshold
-        assertTrue(item.getQuantity() <= item.getAlertThreshold(), "Stock should be below threshold and trigger an alert.");
+        assertTrue(item.getQuantity() <= item.getThreshold(), "Stock should be below threshold and trigger an alert.");
     }
 }
