@@ -10,17 +10,15 @@ public class ReportPanel extends JPanel {
     public ReportPanel() {
         setLayout(new BorderLayout());
 
-        // Text area for report display
+        // Report Area
         reportArea = new JTextArea(20, 40);
         reportArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(reportArea);
 
-        // Buttons for generating and exporting reports
+        // Buttons
+        JPanel buttonPanel = new JPanel();
         generateButton = new JButton("Generate Report");
         exportButton = new JButton("Export Report");
-
-        // Panel for buttons
-        JPanel buttonPanel = new JPanel();
         buttonPanel.add(generateButton);
         buttonPanel.add(exportButton);
 
@@ -29,3 +27,4 @@ public class ReportPanel extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 }
+
