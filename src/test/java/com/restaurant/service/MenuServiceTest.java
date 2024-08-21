@@ -8,14 +8,26 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This class contains unit tests for the MenuService class.
+ * It tests various scenarios related to menu item management.
+ */
 class MenuServiceTest {
     private MenuService menuService;
 
+    /**
+     * This method is run before each test.
+     * It sets up a fresh MenuService instance for each test to ensure isolation.
+     */
     @BeforeEach
     void setUp() {
         menuService = new MenuService();
     }
 
+    /**
+     * Tests adding items to the menu and retrieving all items.
+     * Verifies that added items are correctly stored and can be retrieved.
+     */
     @Test
     void testAddAndGetAllItems() {
         MenuItem item1 = new MenuItem("Pasta", "Delicious pasta", 15, 12.99, Arrays.asList("Pasta", "Sauce"));
@@ -30,6 +42,10 @@ class MenuServiceTest {
         assertTrue(items.contains(item2));
     }
 
+    /**
+     * Tests removing an item from the menu.
+     * Verifies that the item is successfully removed after addition.
+     */
     @Test
     void testRemoveItem() {
         MenuItem item = new MenuItem("Burger", "Juicy burger", 10, 9.99, Arrays.asList("Bun", "Patty"));
@@ -40,6 +56,10 @@ class MenuServiceTest {
         assertEquals(0, items.size());
     }
 
+    /**
+     * Tests editing an existing menu item.
+     * Verifies that the item's details are correctly updated.
+     */
     @Test
     void testEditItem() {
         MenuItem oldItem = new MenuItem("Pizza", "Cheesy pizza", 20, 14.99, Arrays.asList("Dough", "Cheese"));
@@ -54,6 +74,10 @@ class MenuServiceTest {
         assertEquals(15.99, updatedItem.getPrice(), 0.01);
     }
 
+    /**
+     * Tests finding a menu item by its name.
+     * Verifies that the correct item is retrieved based on the name.
+     */
     @Test
     void testFindItemByName() {
         MenuItem item = new MenuItem("Sushi", "Fresh sushi", 30, 18.99, Arrays.asList("Rice", "Fish"));
@@ -64,6 +88,10 @@ class MenuServiceTest {
         assertEquals("Sushi", foundItem.getName());
     }
 
+    /**
+     * Tests saving the menu to a file and then loading it.
+     * Verifies that the loaded menu contains the same items as the saved menu.
+     */
     @Test
     void testSaveAndLoadMenu() {
         MenuItem item = new MenuItem("Steak", "Grilled steak", 25, 24.99, Arrays.asList("Beef", "Spices"));
