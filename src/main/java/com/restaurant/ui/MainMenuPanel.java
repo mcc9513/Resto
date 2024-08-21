@@ -7,6 +7,7 @@ public class MainMenuPanel extends JPanel {
     // Declare the buttons for navigation
     public JButton menuManagementButton, orderManagementButton, reportButton;
     public JButton inventoryManagementButton, staffManagementButton, tableManagementButton;
+    public JButton logoutButton;
 
     public MainMenuPanel() {
         // Set up the layout
@@ -19,6 +20,7 @@ public class MainMenuPanel extends JPanel {
         inventoryManagementButton = new JButton("Inventory Management");
         staffManagementButton = new JButton("Staff Management");
         tableManagementButton = new JButton("Table Management");
+        logoutButton = new JButton("Logout");
 
         // Add buttons to the panel
         add(menuManagementButton);
@@ -27,5 +29,6 @@ public class MainMenuPanel extends JPanel {
         add(inventoryManagementButton);
         add(staffManagementButton);
         add(tableManagementButton);
+        add(logoutButton);
     }
 }

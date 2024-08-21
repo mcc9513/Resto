@@ -5,12 +5,12 @@ import java.awt.*;
 
 public class MenuManagementPanel extends JPanel {
     private JTable menuTable;
-    private JButton addItemButton, editItemButton, deleteItemButton;
+    private JButton addItemButton, editItemButton, deleteItemButton, mainButton, logOutButton;
 
     public MenuManagementPanel() {
         setLayout(new BorderLayout());
 
-        // Menu Table
+        // Menu Table | Code for database will go here .
         String[] columns = {"Item Name", "Category", "Price"};
         Object[][] data = {
                 {"Burger", "Main Course", "$8.00"},
@@ -24,9 +24,13 @@ public class MenuManagementPanel extends JPanel {
         addItemButton = new JButton("Add Item");
         editItemButton = new JButton("Edit Item");
         deleteItemButton = new JButton("Delete Item");
+        mainButton = new JButton("Home");
+        logOutButton = new JButton("Log Out");
         buttonPanel.add(addItemButton);
         buttonPanel.add(editItemButton);
         buttonPanel.add(deleteItemButton);
+        buttonPanel.add(mainButton);
+        buttonPanel.add(logOutButton);
 
         // Add components to panel
         add(tableScroll, BorderLayout.CENTER);

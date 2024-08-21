@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class TableManagmentPanel extends JPanel {
     private JTable tableStatusTable;
-    private JButton reserveButton, releaseButton;
+    private JButton reserveButton, releaseButton, mainButton, logOutButton;
 
     public TableManagmentPanel() {
         setLayout(new BorderLayout());
@@ -23,8 +23,12 @@ public class TableManagmentPanel extends JPanel {
         JPanel buttonPanel = new JPanel();
         reserveButton = new JButton("Reserve Table");
         releaseButton = new JButton("Release Table");
+        mainButton = new JButton("Home");
+        logOutButton = new JButton("Log Out");
         buttonPanel.add(reserveButton);
         buttonPanel.add(releaseButton);
+        buttonPanel.add(mainButton);
+        buttonPanel.add(logOutButton);
 
         // Add components to panel
         add(tableScroll, BorderLayout.CENTER);

@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class OrderManagementPanel extends JPanel {
     private JTable orderTable;
-    private JButton addOrderButton, viewOrderButton;
+    private JButton addOrderButton, viewOrderButton, mainButton, logOutButton;
 
     public OrderManagementPanel() {
         setLayout(new BorderLayout());
@@ -23,8 +23,12 @@ public class OrderManagementPanel extends JPanel {
         JPanel buttonPanel = new JPanel();
         addOrderButton = new JButton("Add Order");
         viewOrderButton = new JButton("View Order");
+        mainButton = new JButton("Home");
+        logOutButton = new JButton("Log Out");
         buttonPanel.add(addOrderButton);
         buttonPanel.add(viewOrderButton);
+        buttonPanel.add(mainButton);
+        buttonPanel.add(logOutButton);
 
         // Add components to panel
         add(tableScroll, BorderLayout.CENTER);
