@@ -3,11 +3,11 @@ package com.restaurant.ui;
 import javax.swing.*;
 import java.awt.*;
 
-public class TableManagmentPanel extends JPanel {
+public class TableManagementPanel extends JPanel {
     private JTable tableStatusTable;
     private JButton reserveButton, releaseButton, mainButton, logOutButton;
 
-    public TableManagmentPanel() {
+    public TableManagementPanel() {
         setLayout(new BorderLayout());
 
         // Table status table

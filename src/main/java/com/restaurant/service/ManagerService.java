@@ -1,13 +1,11 @@
 package com.restaurant.service;
 
-// In ManagerService.java
-
 import com.restaurant.model.InventoryItem;
 import com.restaurant.model.Manager;
 
 public class ManagerService {
 
-    private InventoryService inventoryService;
+    private final InventoryService inventoryService;
 
     public ManagerService(InventoryService inventoryService) {
         this.inventoryService = inventoryService;
@@ -15,30 +13,33 @@ public class ManagerService {
 
     // Check if the user is a manager before performing actions
     private boolean isManager(Manager manager) {
-        return manager != null && "Manager".equals(manager.getRole());
+        return manager != null && "Manager".equalsIgnoreCase(manager.getRole());
     }
 
-    public void addInventoryItem(Manager manager, InventoryItem item) {
+    public String addInventoryItem(Manager manager, InventoryItem item) {
         if (isManager(manager)) {
-            inventoryService.addInventoryItem(item);
+            boolean result = inventoryService.addInventoryItem(item);
+            return result ? "Inventory item added successfully." : "Failed to add inventory item.";
         } else {
-            System.out.println("Permission denied: Only managers can add inventory items.");
+            return "Permission denied: Only managers can add inventory items.";
         }
     }
 
-    public void removeInventoryItem(Manager manager, int itemId) {
+    public String removeInventoryItem(Manager manager, int itemId) {
         if (isManager(manager)) {
-            inventoryService.removeInventoryItem(itemId);
+            boolean result = inventoryService.removeInventoryItem(itemId);
+            return result ? "Inventory item removed successfully." : "Failed to remove inventory item.";
         } else {
-            System.out.println("Permission denied: Only managers can remove inventory items.");
+            return "Permission denied: Only managers can remove inventory items.";
         }
     }
 
-    public void updateInventoryItem(Manager manager, InventoryItem item) {
+    public String updateInventoryItem(Manager manager, InventoryItem item) {
         if (isManager(manager)) {
-            inventoryService.updateInventoryItem(item);
+            boolean result = inventoryService.updateInventoryItem(item);
+            return result ? "Inventory item updated successfully." : "Failed to update inventory item.";
         } else {
-            System.out.println("Permission denied: Only managers can update inventory items.");
+            return "Permission denied: Only managers can update inventory items.";
         }
     }
 }

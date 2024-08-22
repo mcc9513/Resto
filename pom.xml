@@ -29,12 +29,6 @@
             <version>4.5.1</version>
             <scope>test</scope>
         </dependency>
-        <!-- Add any additional dependencies your project needs here -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.23</version>
-        </dependency>
 
         <!-- Hibernate Core -->
         <dependency>
@@ -43,18 +37,18 @@
             <version>5.4.30.Final</version>
         </dependency>
 
-        <!-- Hibernate EntityManager -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.6.14.Final</version>
-        </dependency>
         <!-- SQLite JDBC Driver -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.36.0.3</version>
         </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <version>2.2</version>
+        </dependency>
+
 
     </dependencies>
 
@@ -73,3 +67,6 @@
         </plugins>
     </build>
 </project>
+
+
+

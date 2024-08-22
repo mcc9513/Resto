@@ -2,13 +2,23 @@ package com.restaurant.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import com.restaurant.service.InventoryService;
+import com.restaurant.service.UserService;
+import com.restaurant.service.LoginService;
 
 public class RestaurantManagementSystem {
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel mainPanel;
+    private UserService userService;
+    private LoginService loginService;  // Added LoginService
 
     public RestaurantManagementSystem() {
+        // Initialize services
+        InventoryService inventoryService = new InventoryService();  // Create the service object
+        userService = new UserService();  // Initialize UserService
+        loginService = new LoginService();  // Initialize LoginService
+
         // Set up the main JFrame
         frame = new JFrame("Restaurant Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -18,15 +28,15 @@ public class RestaurantManagementSystem {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // Create all the panels
-        LoginPanel loginPanel = new LoginPanel();
-        MainMenuPanel mainMenuPanel = new MainMenuPanel();
-        InventoryManagementPanel inventoryPanel = new InventoryManagementPanel();
+        // Create all the panels and pass the necessary services
+        LoginPanel loginPanel = new LoginPanel(loginService);  // Correct instantiation with LoginService
+        MainMenuPanel mainMenuPanel = new MainMenuPanel(cardLayout, mainPanel);  // Pass cardLayout and mainPanel
+        InventoryManagementPanel inventoryPanel = new InventoryManagementPanel(inventoryService);
         OrderManagementPanel orderPanel = new OrderManagementPanel();
         MenuManagementPanel menuPanel = new MenuManagementPanel();
         ReportPanel reportPanel = new ReportPanel();
         StaffManagementPanel staffPanel = new StaffManagementPanel();
-        TableManagmentPanel tablePanel = new TableManagmentPanel();
+        TableManagementPanel tablePanel = new TableManagementPanel();
 
         // Add all panels to the main panel (CardLayout)
         mainPanel.add(loginPanel, "Login");
@@ -46,7 +56,14 @@ public class RestaurantManagementSystem {
         frame.setVisible(true);
 
         // Handle login button action in LoginPanel to navigate to Main Menu
-        loginPanel.loginButton.addActionListener(e -> cardLayout.show(mainPanel, "MainMenu"));
+        loginPanel.loginButton.addActionListener(e -> {
+            boolean authenticated = loginService.login(loginPanel.usernameField.getText(), new String(loginPanel.passwordField.getPassword()));
+            if (authenticated) {
+                cardLayout.show(mainPanel, "MainMenu");
+            } else {
+                JOptionPane.showMessageDialog(frame, "Invalid credentials!", "Login Failed", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
         // Handle navigation buttons in MainMenuPanel to switch between different panels
         mainMenuPanel.menuManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
@@ -55,6 +72,7 @@ public class RestaurantManagementSystem {
         mainMenuPanel.inventoryManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Inventory"));
         mainMenuPanel.staffManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Staff"));
         mainMenuPanel.tableManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Tables"));
+        mainMenuPanel.logoutButton.addActionListener(e -> cardLayout.show(mainPanel, "Login"));
     }
 
     public static void main(String[] args) {
@@ -62,6 +80,5 @@ public class RestaurantManagementSystem {
         SwingUtilities.invokeLater(() -> new RestaurantManagementSystem());
     }
 }
-
 
 

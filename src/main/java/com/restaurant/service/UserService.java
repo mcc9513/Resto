@@ -7,10 +7,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginService {
+public class UserService {
     private final String csvFilePath = "users.csv";
 
-    public LoginService() {
+    public UserService() {
         // Create the CSV file if it doesn't exist
         File file = new File(csvFilePath);
         try {
@@ -25,46 +25,41 @@ public class LoginService {
     // Register a new user
     public boolean registerUser(User user) {
         List<User> users = getAllUsers();
-        // Check if the username already exists
-        for (User existingUser : users) {
-            if (existingUser.getUsername().equals(user.getUsername())) {
-                return false; // Username already exists
+        for (User u : users) {
+            if (u.getUsername().equals(user.getUsername())) {
+                System.out.println("User already exists");
+                return false;
             }
         }
-        // Hash the user's password before storing it
-        String hashedPassword = HashUtil.hashPassword(user.getPasswordHash());
-        user.setPasswordHash(hashedPassword);
 
-        // Add the new user to the list
+        user.setPasswordHash(HashUtil.hashPassword(user.getPasswordHash()));  // Hash password before saving
         users.add(user);
-
-        // Save the updated user list to CSV
         return saveAllUsersToCSV(users);
     }
 
-    // Authenticate a user based on username and password
-    public boolean login(String username, String password) {
+    // Login user by checking the hashed password
+    public boolean loginUser(String username, String password) {
         List<User> users = getAllUsers();
         for (User user : users) {
             if (user.getUsername().equals(username)) {
-                // Check if the password matches after hashing
+                // Verify the password by comparing the hashed password stored with the hash of input
                 return HashUtil.verifyPassword(password, user.getPasswordHash());
             }
         }
         return false;
     }
 
-    // Get all users from the CSV file
+    // Validate login for login panel
+    public boolean validateLogin(String username, String password) {
+        return loginUser(username, password);
+    }
+
+    // Get all users from CSV
     private List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
             String line;
-            boolean isFirstLine = true;
             while ((line = br.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false; // Skip the header
-                    continue;
-                }
                 User user = User.fromCSV(line);
                 users.add(user);
             }
@@ -74,7 +69,7 @@ public class LoginService {
         return users;
     }
 
-    // Save all users to the CSV file
+    // Save the list of users back to CSV
     private boolean saveAllUsersToCSV(List<User> users) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvFilePath))) {
             for (User user : users) {
@@ -88,3 +83,5 @@ public class LoginService {
         }
     }
 }
+
+

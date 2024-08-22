@@ -1,40 +1,30 @@
 package com.restaurant.model;
-import javax.persistence.*;
-import javax.persistence.Table;
 
-
-@Entity
-@Table(name = "Inventory")
 public class InventoryItem {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int itemId;
-
-    @Column(name = "itemName", nullable = false, unique = true)
     private String itemName;
-
-    @Column(name = "quantity", nullable = false)
     private int quantity;
-
-    @Column(name = "threshold", nullable = false)
     private int threshold;
-
-    @Column(name = "price", nullable = false)
     private double price;
 
-    //Constructor changed to create new InventoryItem
-    public static InventoryItem InventoryItem(String itemName, int quantity, int threshold, double price) {
-        InventoryItem item = new InventoryItem();
-        item.setItemName(itemName);
-        item.setQuantity(quantity);
-        item.setThreshold(threshold);
-        item.setPrice(price);
-        return item;
+    // Constructor
+    public InventoryItem() {}
+
+    public InventoryItem(int itemId, String itemName, int quantity, int threshold, double price) {
+        this.itemId = itemId;
+        this.itemName = itemName;
+        this.quantity = quantity;
+        this.threshold = threshold;
+        this.price = price;
     }
 
-
-    public InventoryItem() {}
+    public InventoryItem(String itemName, int quantity, int threshold, double price) {
+        this.itemName = itemName;
+        this.quantity = quantity;
+        this.threshold = threshold;
+        this.price = price;
+    }
 
     // Method to add stock
     public void addStock(int amount) {
@@ -63,7 +53,14 @@ public class InventoryItem {
         System.out.println("Alert: Stock low for " + itemName + ". Current stock: " + quantity);
     }
 
-    public int getItemId() { return itemId; }
+    // Getters and Setters
+    public int getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
 
     public String getItemName() {
         return itemName;
@@ -73,13 +70,15 @@ public class InventoryItem {
         this.itemName = itemName;
     }
 
-    public double getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-    public double getThreshold() {
+    public int getThreshold() {
         return threshold;
     }
 
@@ -87,8 +86,32 @@ public class InventoryItem {
         this.threshold = threshold;
     }
 
-    public double getPrice() { return price; }
+    public double getPrice() {
+        return price;
+    }
 
-    private void setPrice(double price) { this.price = price; }
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    // Convert InventoryItem to CSV format
+    public String toCSV() {
+        return itemId + "," + itemName + "," + quantity + "," + threshold + "," + price;
+    }
+
+    // Create InventoryItem from CSV
+    public static InventoryItem fromCSV(String csvLine) {
+        String[] fields = csvLine.split(",");
+        int id = Integer.parseInt(fields[0]);
+        String name = fields[1];
+        int qty = Integer.parseInt(fields[2]);
+        int thresh = Integer.parseInt(fields[3]);
+        double prc = Double.parseDouble(fields[4]);
+
+        return new InventoryItem(id, name, qty, thresh, prc);
+    }
 }
+
+
+
 

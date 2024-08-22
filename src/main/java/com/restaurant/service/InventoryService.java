@@ -1,130 +1,100 @@
 package com.restaurant.service;
 
-
 import com.restaurant.model.InventoryItem;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
+
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryService {
 
-    private SessionFactory sessionFactory;
+    private final String csvFilePath = "inventory.csv";
 
-    // Constructor to establish a Hibernate session factory
     public InventoryService() {
-        Configuration configuration = new Configuration().configure("hibernate.cfg.xml")
-                .addAnnotatedClass(InventoryItem.class);
-        sessionFactory = configuration.buildSessionFactory();
-    }
-
-    // Method to add a new inventory item
-    public void addInventoryItem(InventoryItem item) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            session.save(item);
-            transaction.commit();
-            System.out.println("Inventory item added: " + item.getItemName());
+        // Create the CSV file if it doesn't exist
+        File file = new File(csvFilePath);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    // Method to update an existing inventory item
-    public void updateInventoryItem(InventoryItem item) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            session.update(item);
-            transaction.commit();
-            System.out.println("Inventory item updated: " + item.getItemName());
+    // Method to add a new inventory item (writes to CSV)
+    public boolean addInventoryItem(InventoryItem item) {
+        List<InventoryItem> items = getAllInventoryItems(); // Load existing items
+        item.setItemId(items.size() + 1); // Set a new ID
+        items.add(item); // Add the new item
+
+        return saveAllItemsToCSV(items); // Save the list back to CSV
+    }
+
+    // Method to add an item directly to the CSV (for addItemToCSV functionality)
+    public static boolean addItemToCSV(InventoryItem item) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("inventory.csv", true))) {
+            bw.write(item.toCSV());
+            bw.newLine();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
+    }
+
+    // Method to update an existing inventory item (rewrites the CSV)
+    public boolean updateInventoryItem(InventoryItem item) {
+        List<InventoryItem> items = getAllInventoryItems();
+        for (InventoryItem i : items) {
+            if (i.getItemId() == item.getItemId()) {
+                i.setItemName(item.getItemName());
+                i.setQuantity(item.getQuantity());
+                i.setThreshold(item.getThreshold());
+                i.setPrice(item.getPrice());
+                break;
+            }
+        }
+        return saveAllItemsToCSV(items);
     }
 
     // Method to remove an inventory item by its ID
-    public void removeInventoryItem(int itemId) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            InventoryItem item = session.get(InventoryItem.class, itemId);
-            if (item != null) {
-                session.delete(item);
-                transaction.commit();
-                System.out.println("Inventory item removed: ID " + itemId);
-            } else {
-                System.out.println("Inventory item not found: ID " + itemId);
-            }
-        }
-    }
-
-    // Method to retrieve a specific inventory item by its ID
-    public InventoryItem getInventoryItem(int itemId) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.get(InventoryItem.class, itemId);
-        }
-    }
-
-    // Method to retrieve all inventory items
-    @SuppressWarnings("unchecked")
-    public List<InventoryItem> getAllInventoryItems() {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM InventoryItem").list();
-        }
-    }
-
-    // Method to search for inventory items by keyword
-    @SuppressWarnings("unchecked")
-    public List<InventoryItem> searchInventoryItems(String keyword) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM InventoryItem WHERE name LIKE :keyword")
-                    .setParameter("keyword", "%" + keyword + "%")
-                    .list();
-        }
-    }
-
-    // Method to reduce the quantity of an inventory item
-    public void reduceInventoryItemQuantity(int itemId, int quantity) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            InventoryItem item = session.get(InventoryItem.class, itemId);
-            if (item != null && item.getQuantity() >= quantity) {
-                item.setQuantity((int) (item.getQuantity() - quantity));
-                session.update(item);
-                transaction.commit();
-                System.out.println("Inventory item quantity reduced: ID " + itemId + " by " + quantity);
-            } else {
-                System.out.println("Unable to reduce quantity. Inventory item not found or insufficient quantity: ID " + itemId);
-            }
-        }
-    }
-
-    // Method to increase the quantity of an inventory item
-    public void increaseInventoryItemQuantity(int itemId, int quantity) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            InventoryItem item = session.get(InventoryItem.class, itemId);
-            if (item != null) {
-                item.setQuantity((int) (item.getQuantity() + quantity));
-                session.update(item);
-                transaction.commit();
-                System.out.println("Inventory item quantity increased: ID " + itemId + " by " + quantity);
-            } else {
-                System.out.println("Inventory item not found: ID " + itemId);
-            }
-        }
-    }
-
-    // Method to generate an inventory report (could be expanded to save to a file, etc.)
-    public void generateInventoryReport() {
+    public boolean removeInventoryItem(int itemId) {
         List<InventoryItem> items = getAllInventoryItems();
-        System.out.println("Inventory Report:");
-        for (InventoryItem item : items) {
-            System.out.println(item);
+        items.removeIf(item -> item.getItemId() == itemId);
+        return saveAllItemsToCSV(items);
+    }
+
+    // Method to retrieve all inventory items from CSV
+    public List<InventoryItem> getAllInventoryItems() {
+        List<InventoryItem> items = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                InventoryItem item = InventoryItem.fromCSV(line);
+                items.add(item);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
+    // Save the list of inventory items back to CSV
+    private boolean saveAllItemsToCSV(List<InventoryItem> items) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvFilePath))) {
+            for (InventoryItem item : items) {
+                bw.write(item.toCSV());
+                bw.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
-
-    // Close sessionFactory when done
-    public void close() {
-        sessionFactory.close();
-    }
-
-
 }
+
+
+
 
