@@ -80,6 +80,37 @@ public class InventoryService {
         return items;
     }
 
+    // Get the total quantity of items in the inventory
+    public int getTotalInventoryCount() {
+        List<InventoryItem> items = getAllInventoryItems();
+        int totalQuantity = 0;
+        for (InventoryItem item : items) {
+            totalQuantity += item.getQuantity();
+        }
+        return totalQuantity;
+    }
+
+    // Get the total value of the inventory (sum of price * quantity)
+    public double getTotalInventoryValue() {
+        List<InventoryItem> items = getAllInventoryItems();
+        double totalValue = 0;
+        for (InventoryItem item : items) {
+            totalValue += item.getQuantity() * item.getPrice();
+        }
+        return totalValue;
+    }
+
+    // Get an inventory item by its name
+    public InventoryItem getInventoryItemByName(String itemName) {
+        List<InventoryItem> items = getAllInventoryItems();
+        for (InventoryItem item : items) {
+            if (item.getItemName().equalsIgnoreCase(itemName)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     // Save the list of inventory items back to CSV
     private boolean saveAllItemsToCSV(List<InventoryItem> items) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvFilePath))) {
@@ -94,7 +125,5 @@ public class InventoryService {
         }
     }
 }
-
-
 
 

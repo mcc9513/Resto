@@ -51,6 +51,21 @@ public class MenuService {
         return items;
     }
 
+    // Fetches a MenuItem by its name
+    public MenuItem getMenuItemByName(String name) {
+        try {
+            List<MenuItem> items = loadMenuItems(); // Load the menu items from CSV
+            for (MenuItem item : items) {
+                if (item.getName().equalsIgnoreCase(name)) {
+                    return item;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Log the exception
+        }
+        return null; // Return null if item not found
+    }
+
     // Saves the list of MenuItem objects to the CSV file.
     private void saveMenuItems(List<MenuItem> items) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(MENU_FILE))) {
@@ -81,5 +96,4 @@ public class MenuService {
         List<String> ingredients = List.of(fields[4].trim().split("\\s*;\\s*")); // Ingredients split by semicolon
         return new MenuItem(name, description, preparationTime, price, ingredients);
     }
-
 }
