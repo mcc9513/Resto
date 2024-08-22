@@ -8,7 +8,7 @@ import java.util.List;
 
 public class InventoryService {
 
-    private final String csvFilePath = "inventory.csv";
+    private final String csvFilePath = "Resto/inventory.csv";
 
     public InventoryService() {
         // Create the CSV file if it doesn't exist

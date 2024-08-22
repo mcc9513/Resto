@@ -2,7 +2,7 @@ package com.restaurant.ui;
 
 import com.restaurant.model.MenuItem;
 import com.restaurant.service.MenuService;
-
+import com.restaurant.model.User;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -13,10 +13,18 @@ public class MenuManagementPanel extends JPanel {
     private JTable menuTable;
     private DefaultTableModel tableModel;
     private MenuService menuService;
-    private JFrame parentFrame; // Reference to the parent frame
+    private JFrame parentFrame;
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
+    private User currentUser;
 
-    public MenuManagementPanel(JFrame parentFrame) {
-        this.parentFrame = parentFrame; // Store the reference to the parent frame
+    // Constructor with necessary arguments
+    public MenuManagementPanel(JFrame parentFrame, CardLayout cardLayout, JPanel mainPanel, User currentUser) {
+        this.parentFrame = parentFrame;
+        this.cardLayout = cardLayout;
+        this.mainPanel = mainPanel;
+        this.currentUser = currentUser;
+
         // Initialize MenuService for handling CSV operations
         menuService = new MenuService();
 
@@ -59,10 +67,7 @@ public class MenuManagementPanel extends JPanel {
         JButton backButton = new JButton("Back to Main Menu");
         backButton.addActionListener(e -> {
             // Switch to MainMenuPanel
-            parentFrame.getContentPane().removeAll();
-            parentFrame.getContentPane().add(new MainMenuPanel(parentFrame));
-            parentFrame.revalidate();
-            parentFrame.repaint();
+            cardLayout.show(mainPanel, "MainMenu");
         });
         buttonPanel.add(backButton);
 
@@ -70,10 +75,7 @@ public class MenuManagementPanel extends JPanel {
         JButton logoutButton = new JButton("Log Out");
         logoutButton.addActionListener(e -> {
             // Log out the user and return to the login screen
-            parentFrame.getContentPane().removeAll();
-            parentFrame.getContentPane().add(new LoginPanel(parentFrame));
-            parentFrame.revalidate();
-            parentFrame.repaint();
+            cardLayout.show(mainPanel, "Login");
         });
         buttonPanel.add(logoutButton);
 
@@ -189,3 +191,4 @@ public class MenuManagementPanel extends JPanel {
         }
     }
 }
+

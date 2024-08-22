@@ -13,7 +13,7 @@ public class LoginPanel extends JPanel {
     private JLabel statusLabel;
     private LoginService loginService;
 
-    public LoginPanel(JFrame loginService) {
+    public LoginPanel(JFrame frame, LoginService loginService) {
         this.loginService = loginService; // Inject LoginService
 
         // Set the layout to GridBagLayout for flexibility in positioning components
@@ -81,7 +81,6 @@ public class LoginPanel extends JPanel {
         if (authenticatedUser != null) { // User authenticated
             statusLabel.setText("Login successful!");
             // Trigger navigation to the main menu or next panel
-            // You need to notify the main system to switch panels
             // This can be done by calling a method in the parent window that handles the panel switching
         } else { // Invalid credentials
             statusLabel.setText("Invalid username or password.");
@@ -94,5 +93,3 @@ public class LoginPanel extends JPanel {
         statusLabel.setText("Please enter your credentials.");
     }
 }
-
-

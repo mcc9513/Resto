@@ -18,8 +18,8 @@ public class MainMenuPanel extends JPanel {
     private JPanel mainPanel;
     private User currentUser;  // Track the current logged-in user
 
-    // Pass the CardLayout, mainPanel, and currentUser to switch between panels and check user roles
-    public MainMenuPanel(CardLayout cardLayout, JPanel mainPanel, User currentUser, InventoryService inventoryService) {
+    // Pass the JFrame, CardLayout, mainPanel, and currentUser to switch between panels and check user roles
+    public MainMenuPanel(JFrame frame, CardLayout cardLayout, JPanel mainPanel, User currentUser, InventoryService inventoryService) {
         this.cardLayout = cardLayout;
         this.mainPanel = mainPanel;
         this.currentUser = currentUser;  // Track the current user
@@ -106,5 +106,3 @@ public class MainMenuPanel extends JPanel {
         this.currentUser = user;
     }
 }
-
-

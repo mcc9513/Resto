@@ -31,15 +31,14 @@ public class RestaurantManagementSystem {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // Create all the panels
-        LoginPanel loginPanel = new LoginPanel(loginService);
-        MainMenuPanel mainMenuPanel = new MainMenuPanel(cardLayout, mainPanel, currentUser, inventoryService);
+        // Create all the panels and pass JFrame to those that require it
+        LoginPanel loginPanel = new LoginPanel(frame, loginService);  // Pass JFrame and LoginService
+        MainMenuPanel mainMenuPanel = new MainMenuPanel(frame, cardLayout, mainPanel, currentUser, inventoryService); // Pass JFrame
         InventoryManagementPanel inventoryPanel = new InventoryManagementPanel(inventoryService);
         OrderManagementPanel orderPanel = new OrderManagementPanel();
-        MenuManagementPanel menuPanel = new MenuManagementPanel();
+        MenuManagementPanel menuPanel = new MenuManagementPanel(frame, cardLayout, mainPanel, currentUser);
         ReportPanel reportPanel = new ReportPanel();
-        // Pass userService, cardLayout, and mainPanel to StaffManagementPanel
-        StaffManagementPanel staffPanel = new StaffManagementPanel(userService, cardLayout, mainPanel);
+        StaffManagementPanel staffPanel = new StaffManagementPanel(userService, cardLayout, mainPanel); // Pass userService, cardLayout, and mainPanel
         TableManagementPanel tablePanel = new TableManagementPanel();
 
         // Add all panels to the main panel (CardLayout)
@@ -67,7 +66,7 @@ public class RestaurantManagementSystem {
 
             if (currentUser != null) {
                 // Update MainMenuPanel with the authenticated user
-                MainMenuPanel newMainMenuPanel = new MainMenuPanel(cardLayout, mainPanel, currentUser, inventoryService);
+                MainMenuPanel newMainMenuPanel = new MainMenuPanel(frame, cardLayout, mainPanel, currentUser, inventoryService);
                 mainPanel.add(newMainMenuPanel, "MainMenu");
 
                 // Show the main menu panel after successful login

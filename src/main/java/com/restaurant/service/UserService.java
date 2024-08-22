@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserService {
-    private final String csvFilePath = "users.csv";
+    private final String csvFilePath = "Resto/users.csv";
 
     public UserService() {
         // Create the CSV file if it doesn't exist
