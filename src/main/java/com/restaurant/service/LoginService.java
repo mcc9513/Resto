@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginService {
-    private final String csvFilePath = "Resto/users.csv";
+    private final String csvFilePath = "users.csv";
 
     public LoginService() {
         // Create the CSV file if it doesn't exist

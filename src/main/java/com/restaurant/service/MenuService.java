@@ -1,112 +1,84 @@
 package com.restaurant.service;
+
 import com.restaurant.model.MenuItem;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The MenuService class manages the restaurant's menu items.
- * It provides functionality to add, remove, edit, and retrieve menu items,
- * as well as save and load the menu from a file.
+ * Manages the restaurant's menu items, stored in a CSV file.
+ * Supports adding, editing, and deleting items, with changes saved between sessions.
  */
 public class MenuService {
-    private List<MenuItem> menuItems;
-    private static final String FILE_NAME = "menu.dat";
+    private static final String MENU_FILE = "Menu.csv";
 
-    /**
-     * Constructor initializes an empty list of menu items.
-     */
-    public MenuService() {
-        this.menuItems = new ArrayList<>();
+    // Adds a new MenuItem and saves it to the CSV file.
+    public void addMenuItem(MenuItem item) throws IOException {
+        List<MenuItem> items = loadMenuItems();
+        items.add(item);
+        saveMenuItems(items);
     }
 
-    /**
-     * Adds a new item to the menu.
-     * @param item The MenuItem to be added
-     */
-    public void addItem(MenuItem item) {
-        menuItems.add(item);
-    }
-
-    /**
-     * Removes an item from the menu based on its name.
-     * @param itemName The name of the item to be removed
-     */
-    public void removeItem(String itemName) {
-        menuItems.removeIf(item -> item.getName().equals(itemName));
-    }
-
-    /**
-     * Edits an existing menu item.
-     * @param itemName The name of the item to be edited
-     * @param newItem The new MenuItem to replace the old one
-     */
-    public void editItem(String itemName, MenuItem newItem) {
-        for (int i = 0; i < menuItems.size(); i++) {
-            if (menuItems.get(i).getName().equals(itemName)) {
-                menuItems.set(i, newItem);
+    // Edits an existing MenuItem identified by its name and saves the changes.
+    public void editMenuItem(String name, MenuItem updatedItem) throws IOException {
+        List<MenuItem> items = loadMenuItems();
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getName().equalsIgnoreCase(name)) {
+                items.set(i, updatedItem);
                 break;
             }
         }
+        saveMenuItems(items);
     }
 
-    /**
-     * Retrieves all menu items.
-     * @return A new ArrayList containing all menu items
-     */
-    public List<MenuItem> getAllItems() {
-        return new ArrayList<>(menuItems);
+    // Deletes a MenuItem identified by its name and updates the CSV file.
+    public void deleteMenuItem(String name) throws IOException {
+        List<MenuItem> items = loadMenuItems();
+        items.removeIf(item -> item.getName().equalsIgnoreCase(name));
+        saveMenuItems(items);
     }
 
-    /**
-     * Saves the current menu to a file.
-     * Uses Java serialization to write the list of MenuItems.
-     */
-    public void saveMenu() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-            oos.writeObject(menuItems);
-        } catch (IOException e) {
-            e.printStackTrace();
+    // Loads all MenuItem objects from the CSV file.
+    public List<MenuItem> loadMenuItems() throws IOException {
+        List<MenuItem> items = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(MENU_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                items.add(convertCsvToMenuItem(line));
+            }
         }
+        return items;
     }
 
-    /**
-     * Loads the menu from a file.
-     * If the file exists, it uses Java deserialization to read the list of MenuItems.
-     */
-    public void loadMenu() {
-        File file = new File(FILE_NAME);
-        if (file.exists()) {
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-                menuItems = (List<MenuItem>) ois.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+    // Saves the list of MenuItem objects to the CSV file.
+    private void saveMenuItems(List<MenuItem> items) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(MENU_FILE))) {
+            for (MenuItem item : items) {
+                writer.write(convertMenuItemToCsv(item));
+                writer.newLine();
             }
         }
     }
 
-    /**
-     * Finds a menu item by its name.
-     * @param name The name of the item to find
-     * @return The MenuItem if found, or null if not found
-     */
-    public MenuItem findItemByName(String name) {
-        return menuItems.stream()
-                .filter(item -> item.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+    // Converts a MenuItem object to a CSV format string.
+    private String convertMenuItemToCsv(MenuItem item) {
+        return String.format("%s,%s,%d,%.2f,%s",
+                item.getName(),
+                item.getDescription(),
+                item.getPreparationTime(),
+                item.getPrice(),
+                String.join(";", item.getIngredients()));
     }
 
-    /**
-     * Provides a string representation of all menu items.
-     * @return A string containing details of all menu items
-     */
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (MenuItem item : menuItems) {
-            sb.append(item.toString()).append("\n");
-        }
-        return sb.toString();
+    // Converts a CSV format string to a MenuItem object.
+    private MenuItem convertCsvToMenuItem(String csvLine) {
+        String[] fields = csvLine.split(",");
+        String name = fields[0];
+        String description = fields[1];
+        int preparationTime = Integer.parseInt(fields[2]);
+        double price = Double.parseDouble(fields[3]);
+        List<String> ingredients = List.of(fields[4].split(";"));
+        return new MenuItem(name, description, preparationTime, price, ingredients);
     }
 }
