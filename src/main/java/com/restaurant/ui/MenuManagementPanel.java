@@ -1,4 +1,4 @@
-package com.restaurant.gui;
+package com.restaurant.ui;
 
 import com.restaurant.model.MenuItem;
 import com.restaurant.service.MenuService;
@@ -6,8 +6,6 @@ import com.restaurant.service.MenuService;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,8 +13,10 @@ public class MenuManagementPanel extends JPanel {
     private JTable menuTable;
     private DefaultTableModel tableModel;
     private MenuService menuService;
+    private JFrame parentFrame; // Reference to the parent frame
 
-    public MenuManagementPanel() {
+    public MenuManagementPanel(JFrame parentFrame) {
+        this.parentFrame = parentFrame; // Store the reference to the parent frame
         // Initialize MenuService for handling CSV operations
         menuService = new MenuService();
 
@@ -36,33 +36,46 @@ public class MenuManagementPanel extends JPanel {
 
         // Add Button
         JButton addButton = new JButton("Add");
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addMenuItem();
-            }
-        });
+        addButton.addActionListener(e -> addMenuItem());
         buttonPanel.add(addButton);
 
         // Edit Button
         JButton editButton = new JButton("Edit");
-        editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        editButton.addActionListener(e -> {
+            try {
                 editMenuItem();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         });
         buttonPanel.add(editButton);
 
         // Delete Button
         JButton deleteButton = new JButton("Delete");
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteMenuItem();
-            }
-        });
+        deleteButton.addActionListener(e -> deleteMenuItem());
         buttonPanel.add(deleteButton);
+
+        // Back to Main Menu Button
+        JButton backButton = new JButton("Back to Main Menu");
+        backButton.addActionListener(e -> {
+            // Switch to MainMenuPanel
+            parentFrame.getContentPane().removeAll();
+            parentFrame.getContentPane().add(new MainMenuPanel(parentFrame));
+            parentFrame.revalidate();
+            parentFrame.repaint();
+        });
+        buttonPanel.add(backButton);
+
+        // Log Out Button
+        JButton logoutButton = new JButton("Log Out");
+        logoutButton.addActionListener(e -> {
+            // Log out the user and return to the login screen
+            parentFrame.getContentPane().removeAll();
+            parentFrame.getContentPane().add(new LoginPanel(parentFrame));
+            parentFrame.revalidate();
+            parentFrame.repaint();
+        });
+        buttonPanel.add(logoutButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -88,9 +101,7 @@ public class MenuManagementPanel extends JPanel {
 
     // Add a new menu item
     private void addMenuItem() {
-        MenuItemDialog dialog = new MenuItemDialog(null);
-        dialog.setVisible(true);
-        MenuItem newItem = dialog.getMenuItem();
+        MenuItem newItem = showMenuItemDialog(null);
         if (newItem != null) {
             try {
                 menuService.addMenuItem(newItem);
@@ -102,15 +113,14 @@ public class MenuManagementPanel extends JPanel {
     }
 
     // Edit the selected menu item
-    private void editMenuItem() {
+    private void editMenuItem() throws IOException {
         int selectedRow = menuTable.getSelectedRow();
         if (selectedRow >= 0) {
             String name = (String) tableModel.getValueAt(selectedRow, 0);
-            MenuItemDialog dialog = new MenuItemDialog(menuService.loadMenuItems().stream()
+            MenuItem existingItem = menuService.loadMenuItems().stream()
                     .filter(item -> item.getName().equals(name))
-                    .findFirst().orElse(null));
-            dialog.setVisible(true);
-            MenuItem updatedItem = dialog.getMenuItem();
+                    .findFirst().orElse(null);
+            MenuItem updatedItem = showMenuItemDialog(existingItem);
             if (updatedItem != null) {
                 try {
                     menuService.editMenuItem(name, updatedItem);
@@ -140,6 +150,42 @@ public class MenuManagementPanel extends JPanel {
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please select a menu item to delete.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    // Show the dialog for adding or editing a menu item
+    private MenuItem showMenuItemDialog(MenuItem existingItem) {
+        JTextField nameField = new JTextField(existingItem != null ? existingItem.getName() : "");
+        JTextField descriptionField = new JTextField(existingItem != null ? existingItem.getDescription() : "");
+        JTextField preparationTimeField = new JTextField(existingItem != null ? String.valueOf(existingItem.getPreparationTime()) : "");
+        JTextField priceField = new JTextField(existingItem != null ? String.valueOf(existingItem.getPrice()) : "");
+        JTextField ingredientsField = new JTextField(existingItem != null ? String.join(", ", existingItem.getIngredients()) : "");
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Name:"));
+        panel.add(nameField);
+        panel.add(new JLabel("Description:"));
+        panel.add(descriptionField);
+        panel.add(new JLabel("Preparation Time (min):"));
+        panel.add(preparationTimeField);
+        panel.add(new JLabel("Price:"));
+        panel.add(priceField);
+        panel.add(new JLabel("Ingredients (comma separated):"));
+        panel.add(ingredientsField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, existingItem == null ? "Add Menu Item" : "Edit Menu Item",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText().trim();
+            String description = descriptionField.getText().trim();
+            int preparationTime = Integer.parseInt(preparationTimeField.getText().trim());
+            double price = Double.parseDouble(priceField.getText().trim());
+            List<String> ingredients = List.of(ingredientsField.getText().trim().split("\\s*,\\s*"));
+
+            return new MenuItem(name, description, preparationTime, price, ingredients);
+        } else {
+            return null; // User cancelled the operation
         }
     }
 }

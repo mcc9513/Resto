@@ -1,7 +1,6 @@
 package com.restaurant.ui;
 
 import com.restaurant.service.LoginService;
-import com.restaurant.service.UserService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +12,7 @@ public class LoginPanel extends JPanel {
     private JLabel statusLabel, logoLabel;
     private LoginService loginService;
 
-    public LoginPanel(LoginService loginService) {
+    public LoginPanel(JFrame loginService) {
         this.loginService = loginService; // Inject LoginService
 
         // Set the layout to GridBagLayout for flexibility in positioning components

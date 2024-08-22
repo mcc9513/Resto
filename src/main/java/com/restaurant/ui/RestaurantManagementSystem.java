@@ -11,13 +11,13 @@ public class RestaurantManagementSystem {
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private UserService userService;
-    private LoginService loginService;  // Added LoginService
+    private LoginService loginService;
 
     public RestaurantManagementSystem() {
         // Initialize services
-        InventoryService inventoryService = new InventoryService();  // Create the service object
-        userService = new UserService();  // Initialize UserService
-        loginService = new LoginService();  // Initialize LoginService
+        InventoryService inventoryService = new InventoryService();
+        userService = new UserService();
+        loginService = new LoginService();
 
         // Set up the main JFrame
         frame = new JFrame("Restaurant Management System");
@@ -33,7 +33,7 @@ public class RestaurantManagementSystem {
         MainMenuPanel mainMenuPanel = new MainMenuPanel(cardLayout, mainPanel);  // Pass cardLayout and mainPanel
         InventoryManagementPanel inventoryPanel = new InventoryManagementPanel(inventoryService);
         OrderManagementPanel orderPanel = new OrderManagementPanel();
-        MenuManagementPanel menuPanel = new MenuManagementPanel();
+        MenuManagementPanel menuPanel = new MenuManagementPanel(frame); // Pass the frame to MenuManagementPanel
         ReportPanel reportPanel = new ReportPanel();
         StaffManagementPanel staffPanel = new StaffManagementPanel();
         TableManagementPanel tablePanel = new TableManagementPanel();
@@ -80,5 +80,3 @@ public class RestaurantManagementSystem {
         SwingUtilities.invokeLater(() -> new RestaurantManagementSystem());
     }
 }
-
-

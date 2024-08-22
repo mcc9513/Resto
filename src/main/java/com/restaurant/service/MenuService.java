@@ -74,11 +74,12 @@ public class MenuService {
     // Converts a CSV format string to a MenuItem object.
     private MenuItem convertCsvToMenuItem(String csvLine) {
         String[] fields = csvLine.split(",");
-        String name = fields[0];
-        String description = fields[1];
-        int preparationTime = Integer.parseInt(fields[2]);
-        double price = Double.parseDouble(fields[3]);
-        List<String> ingredients = List.of(fields[4].split(";"));
+        String name = fields[0].trim(); // Name of the item
+        String description = fields[1].trim(); // Description of the item
+        int preparationTime = Integer.parseInt(fields[2].trim()); // Preparation time should be an integer
+        double price = Double.parseDouble(fields[3].trim()); // Price should be parsed as a double
+        List<String> ingredients = List.of(fields[4].trim().split("\\s*;\\s*")); // Ingredients split by semicolon
         return new MenuItem(name, description, preparationTime, price, ingredients);
     }
+
 }
