@@ -1,38 +1,124 @@
 package com.restaurant.ui;
 
+import com.restaurant.model.Table;
+import com.restaurant.service.TableService;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
 public class TableManagementPanel extends JPanel {
-    private JTable tableStatusTable;
-    private JButton reserveButton, releaseButton, mainButton, logOutButton;
+    private TableService tableService;
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
 
-    public TableManagementPanel() {
+    public TableManagementPanel(TableService tableService, CardLayout cardLayout, JPanel mainPanel) {
+        this.tableService = tableService;
+        this.cardLayout = cardLayout;
+        this.mainPanel = mainPanel;
+
+        // Set layout for the panel
         setLayout(new BorderLayout());
 
-        // Table status table
-        String[] columns = {"Table No.", "Capacity", "Status"};
-        Object[][] data = {
-                {"1", "4", "Available"},
-                {"2", "2", "Occupied"},
-        };
-        tableStatusTable = new JTable(data, columns);
-        JScrollPane tableScroll = new JScrollPane(tableStatusTable);
+        // Create table model with column names
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Table ID", "Status", "Customer Name"}, 0);
+        JTable tableTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tableTable);
+        add(scrollPane, BorderLayout.CENTER);
 
-        // Buttons
+        // Load initial data from the service
+        loadTableData(tableModel);
+
+        // Panel for buttons
         JPanel buttonPanel = new JPanel();
-        reserveButton = new JButton("Reserve Table");
-        releaseButton = new JButton("Release Table");
-        mainButton = new JButton("Home");
-        logOutButton = new JButton("Log Out");
-        buttonPanel.add(reserveButton);
-        buttonPanel.add(releaseButton);
-        buttonPanel.add(mainButton);
-        buttonPanel.add(logOutButton);
 
-        // Add components to panel
-        add(tableScroll, BorderLayout.CENTER);
+        // Button to assign customer
+        JButton assignButton = new JButton("Assign Customer");
+        assignButton.addActionListener(e -> assignCustomer(tableTable, tableModel));
+        buttonPanel.add(assignButton);
+
+        // Button to change table status
+        JButton changeStatusButton = new JButton("Change Status");
+        changeStatusButton.addActionListener(e -> changeTableStatus(tableTable, tableModel));
+        buttonPanel.add(changeStatusButton);
+
+        // Button to clear the table
+        JButton clearButton = new JButton("Clear Table");
+        clearButton.addActionListener(e -> clearTable(tableTable, tableModel));
+        buttonPanel.add(clearButton);
+
+        // Back to Main Menu Button
+        JButton backButton = new JButton("Back to Main Menu");
+        backButton.addActionListener(e -> {
+            cardLayout.show(mainPanel, "MainMenu");
+        });
+        buttonPanel.add(backButton);
+
+        // Log Out Button
+        JButton logoutButton = new JButton("Log Out");
+        logoutButton.addActionListener(e -> {
+            cardLayout.show(mainPanel, "Login");
+        });
+        buttonPanel.add(logoutButton);
+
+        // Add the button panel to the south
         add(buttonPanel, BorderLayout.SOUTH);
     }
+
+    // Load table data from the service and populate the JTable
+    private void loadTableData(DefaultTableModel tableModel) {
+        List<Table> tables = tableService.getAllTables();  // Fetch from table service
+        tableModel.setRowCount(0);  // Clear current data
+        for (Table table : tables) {
+            tableModel.addRow(new Object[]{table.getTableId(), table.getStatus(), table.getCustomerName()});
+        }
+    }
+
+    // Assign a customer to the selected table
+    private void assignCustomer(JTable tableTable, DefaultTableModel tableModel) {
+        int selectedRow = tableTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int tableId = (int) tableModel.getValueAt(selectedRow, 0);
+            String customerName = JOptionPane.showInputDialog(this, "Enter Customer Name:");
+            if (customerName != null && !customerName.trim().isEmpty()) {
+                tableService.assignCustomer(tableId, customerName);  // Update the table with customer name
+                loadTableData(tableModel);  // Refresh table data
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a table to assign a customer.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    // Change the status of the selected table (Open, Seated, Reserved)
+    private void changeTableStatus(JTable tableTable, DefaultTableModel tableModel) {
+        int selectedRow = tableTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int tableId = (int) tableModel.getValueAt(selectedRow, 0);
+            String[] statuses = {"Open", "Seated", "Reserved"};
+            String newStatus = (String) JOptionPane.showInputDialog(this, "Select Status:", "Change Status",
+                    JOptionPane.QUESTION_MESSAGE, null, statuses, statuses[0]);
+            if (newStatus != null) {
+                tableService.changeTableStatus(tableId, newStatus);  // Update the table status
+                loadTableData(tableModel);  // Refresh table data
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a table to change status.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    // Clear the selected table
+    private void clearTable(JTable tableTable, DefaultTableModel tableModel) {
+        int selectedRow = tableTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int tableId = (int) tableModel.getValueAt(selectedRow, 0);
+            tableService.clearTable(tableId);  // Clear the table
+            loadTableData(tableModel);  // Refresh table data
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a table to clear.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 }
+
+
 
