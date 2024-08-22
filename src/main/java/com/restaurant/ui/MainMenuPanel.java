@@ -1,5 +1,8 @@
 package com.restaurant.ui;
 
+import com.restaurant.model.User;
+import com.restaurant.service.InventoryService;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,14 +16,16 @@ public class MainMenuPanel extends JPanel {
 
     private CardLayout cardLayout;
     private JPanel mainPanel;
+    private User currentUser;  // Track the current logged-in user
 
-    // Pass the CardLayout and mainPanel to switch between panels
-    public MainMenuPanel(CardLayout cardLayout, JPanel mainPanel) {
+    // Pass the CardLayout, mainPanel, and currentUser to switch between panels and check user roles
+    public MainMenuPanel(CardLayout cardLayout, JPanel mainPanel, User currentUser, InventoryService inventoryService) {
         this.cardLayout = cardLayout;
         this.mainPanel = mainPanel;
+        this.currentUser = currentUser;  // Track the current user
 
         // Set up the layout
-        setLayout(new GridLayout(2, 4));  // Two rows and three columns for buttons
+        setLayout(new GridLayout(2, 4));  // Two rows and four columns for buttons
 
         // Initialize buttons
         menuManagementButton = new JButton("Menu Management");
@@ -72,7 +77,12 @@ public class MainMenuPanel extends JPanel {
         staffManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Staff");
+                // Check if the current user has the role "Manager"
+                if ("Manager".equals(currentUser.getRole())) {
+                    cardLayout.show(mainPanel, "Staff");
+                } else {
+                    JOptionPane.showMessageDialog(mainPanel, "Access Denied: Only Managers can access this panel.", "Access Restricted", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 
@@ -90,5 +100,11 @@ public class MainMenuPanel extends JPanel {
             }
         });
     }
+
+    // Method to set the current user after login
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
 }
+
 

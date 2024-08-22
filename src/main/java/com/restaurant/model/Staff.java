@@ -1,28 +1,65 @@
 package com.restaurant.model;
-import com.restaurant.service.ReservationService;
 
-public class Staff extends User {
+public class Staff {
+    private int id;
+    private String name;
+    private String role;
+    private double hoursWorked;
 
-    private ReservationService reservationService;
-
-    Staff(int id, String passwordHash, String firstNameLastInitial, String role, double hoursWorked) {
-        super(id, passwordHash, firstNameLastInitial, role, hoursWorked);
+    // Constructor
+    public Staff(int id, String name, String role, double hoursWorked) {
+        this.id = id;
+        this.name = name;
+        this.role = role;
+        this.hoursWorked = hoursWorked;
     }
 
-    // Method to set a reservation
-    public void setReservation(Reservation reservation) {
-        reservationService.setReservation(reservation);
+    // Getters and Setters
+    public int getId() {
+        return id;
     }
 
-    // Method to delete a reservation
-    public void deleteReservation(Reservation reservation) {
-        reservationService.deleteReservation(reservation);
+    public void setId(int id) {
+        this.id = id;
     }
 
-    // Method to edit a reservation
-    public void editReservation(Reservation oldReservation, Reservation newReservation) {
-        reservationService.editReservation(oldReservation, newReservation);
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public double getHoursWorked() {
+        return hoursWorked;
+    }
+
+    public void setHoursWorked(double hoursWorked) {
+        this.hoursWorked = hoursWorked;
+    }
+
+    // Convert Staff to CSV format
+    public String toCSV() {
+        return id + "," + name + "," + role + "," + hoursWorked;
+    }
+
+    // Create Staff from CSV
+    public static Staff fromCSV(String csvLine) {
+        String[] fields = csvLine.split(",");
+        int id = Integer.parseInt(fields[0]);
+        String name = fields[1];
+        String role = fields[2];
+        double hoursWorked = Double.parseDouble(fields[3]);
+
+        return new Staff(id, name, role, hoursWorked);
+    }
 }

@@ -1,5 +1,6 @@
 package com.restaurant.ui;
 
+import com.restaurant.model.User;
 import com.restaurant.service.LoginService;
 
 import javax.swing.*;
@@ -9,7 +10,7 @@ public class LoginPanel extends JPanel {
     public JTextField usernameField;
     public JPasswordField passwordField;
     public JButton loginButton, resetButton;
-    private JLabel statusLabel, logoLabel;
+    private JLabel statusLabel;
     private LoginService loginService;
 
     public LoginPanel(JFrame loginService) {
@@ -76,12 +77,13 @@ public class LoginPanel extends JPanel {
         String password = new String(passwordField.getPassword());
 
         // Check with LoginService
-        boolean isAuthenticated = loginService.login(username, password);
-        if (isAuthenticated) {
+        User authenticatedUser = loginService.login(username, password);
+        if (authenticatedUser != null) { // User authenticated
             statusLabel.setText("Login successful!");
             // Trigger navigation to the main menu or next panel
             // You need to notify the main system to switch panels
-        } else {
+            // This can be done by calling a method in the parent window that handles the panel switching
+        } else { // Invalid credentials
             statusLabel.setText("Invalid username or password.");
         }
     }
