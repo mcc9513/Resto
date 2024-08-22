@@ -1,2 +1,3 @@
 id,username,passwordHash,firstNameLastInitial,role,hoursWorked
-1,nichh,75K3eLr+dx6JJFuJ7LwIpEpOFmwGZZkRiB84PURz6U8=,NichH,Manager,100
+1,nichh,75K3eLr+dx6JJFuJ7LwIpEpOFmwGZZkRiB84PURz6U8=,NichH,Manager,100.0
+2,test,XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=,t.,Staff,34.0

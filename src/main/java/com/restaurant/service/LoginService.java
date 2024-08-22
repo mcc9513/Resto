@@ -9,6 +9,7 @@ import java.util.List;
 
 public class LoginService {
     private final String csvFilePath = "Resto/users.csv";
+    private User currentUser;  // Store the currently logged-in user
 
     public LoginService() {
         // Create the CSV file if it doesn't exist
@@ -25,7 +26,6 @@ public class LoginService {
     // Register a new user
     public boolean registerUser(User user) {
         List<User> users = getAllUsers();
-        // Check if the username already exists
         for (User existingUser : users) {
             if (existingUser.getUsername().equals(user.getUsername())) {
                 return false; // Username already exists
@@ -42,16 +42,23 @@ public class LoginService {
         return saveAllUsersToCSV(users);
     }
 
-    // Authenticate a user based on username and password
-    public boolean login(String username, String password) {
+    // Authenticate a user based on username and password, return User if successful
+    public User login(String username, String password) {
         List<User> users = getAllUsers();
         for (User user : users) {
             if (user.getUsername().equals(username)) {
-                // Check if the password matches after hashing
-                return HashUtil.verifyPassword(password, user.getPasswordHash());
+                if (HashUtil.verifyPassword(password, user.getPasswordHash())) {
+                    currentUser = user;  // Set the authenticated user as the current user
+                    return user;  // Return the user object if authenticated
+                }
             }
         }
-        return false;
+        return null;  // Return null if authentication fails
+    }
+
+    // Get the currently logged-in user
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     // Get all users from the CSV file
@@ -62,7 +69,7 @@ public class LoginService {
             boolean isFirstLine = true;
             while ((line = br.readLine()) != null) {
                 if (isFirstLine) {
-                    isFirstLine = false; // Skip the header
+                    isFirstLine = false;  // Skip the header
                     continue;
                 }
                 User user = User.fromCSV(line);

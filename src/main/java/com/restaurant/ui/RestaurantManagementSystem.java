@@ -1,23 +1,26 @@
 package com.restaurant.ui;
 
+import com.restaurant.model.User;
+import com.restaurant.service.InventoryService;
+import com.restaurant.service.LoginService;
+import com.restaurant.service.UserService;
 import javax.swing.*;
 import java.awt.*;
-import com.restaurant.service.InventoryService;
-import com.restaurant.service.UserService;
-import com.restaurant.service.LoginService;
 
 public class RestaurantManagementSystem {
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel mainPanel;
+    private LoginService loginService;
+    private InventoryService inventoryService;
     private UserService userService;
-    private LoginService loginService;  // Added LoginService
+    private User currentUser;
 
     public RestaurantManagementSystem() {
         // Initialize services
-        InventoryService inventoryService = new InventoryService();  // Create the service object
-        userService = new UserService();  // Initialize UserService
-        loginService = new LoginService();  // Initialize LoginService
+        inventoryService = new InventoryService();
+        loginService = new LoginService();
+        userService = new UserService();
 
         // Set up the main JFrame
         frame = new JFrame("Restaurant Management System");
@@ -28,14 +31,15 @@ public class RestaurantManagementSystem {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // Create all the panels and pass the necessary services
-        LoginPanel loginPanel = new LoginPanel(loginService);  // Correct instantiation with LoginService
-        MainMenuPanel mainMenuPanel = new MainMenuPanel(cardLayout, mainPanel);  // Pass cardLayout and mainPanel
+        // Create all the panels
+        LoginPanel loginPanel = new LoginPanel(loginService);
+        MainMenuPanel mainMenuPanel = new MainMenuPanel(cardLayout, mainPanel, currentUser, inventoryService);
         InventoryManagementPanel inventoryPanel = new InventoryManagementPanel(inventoryService);
         OrderManagementPanel orderPanel = new OrderManagementPanel();
         MenuManagementPanel menuPanel = new MenuManagementPanel();
         ReportPanel reportPanel = new ReportPanel();
-        StaffManagementPanel staffPanel = new StaffManagementPanel();
+        // Pass userService, cardLayout, and mainPanel to StaffManagementPanel
+        StaffManagementPanel staffPanel = new StaffManagementPanel(userService, cardLayout, mainPanel);
         TableManagementPanel tablePanel = new TableManagementPanel();
 
         // Add all panels to the main panel (CardLayout)
@@ -57,27 +61,26 @@ public class RestaurantManagementSystem {
 
         // Handle login button action in LoginPanel to navigate to Main Menu
         loginPanel.loginButton.addActionListener(e -> {
-            boolean authenticated = loginService.login(loginPanel.usernameField.getText(), new String(loginPanel.passwordField.getPassword()));
-            if (authenticated) {
+            String username = loginPanel.usernameField.getText();
+            String password = new String(loginPanel.passwordField.getPassword());
+            currentUser = loginService.login(username, password);
+
+            if (currentUser != null) {
+                // Update MainMenuPanel with the authenticated user
+                MainMenuPanel newMainMenuPanel = new MainMenuPanel(cardLayout, mainPanel, currentUser, inventoryService);
+                mainPanel.add(newMainMenuPanel, "MainMenu");
+
+                // Show the main menu panel after successful login
                 cardLayout.show(mainPanel, "MainMenu");
             } else {
                 JOptionPane.showMessageDialog(frame, "Invalid credentials!", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
         });
-
-        // Handle navigation buttons in MainMenuPanel to switch between different panels
-        mainMenuPanel.menuManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
-        mainMenuPanel.orderManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Orders"));
-        mainMenuPanel.reportButton.addActionListener(e -> cardLayout.show(mainPanel, "Reports"));
-        mainMenuPanel.inventoryManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Inventory"));
-        mainMenuPanel.staffManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Staff"));
-        mainMenuPanel.tableManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Tables"));
-        mainMenuPanel.logoutButton.addActionListener(e -> cardLayout.show(mainPanel, "Login"));
     }
 
     public static void main(String[] args) {
         // Launch the application on the Event Dispatch Thread
-        SwingUtilities.invokeLater(() -> new RestaurantManagementSystem());
+        SwingUtilities.invokeLater(RestaurantManagementSystem::new);
     }
 }
 

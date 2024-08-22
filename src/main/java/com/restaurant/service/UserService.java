@@ -6,6 +6,7 @@ import com.restaurant.util.HashUtil;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserService {
     private final String csvFilePath = "Resto/users.csv";
@@ -25,41 +26,46 @@ public class UserService {
     // Register a new user
     public boolean registerUser(User user) {
         List<User> users = getAllUsers();
-        for (User u : users) {
-            if (u.getUsername().equals(user.getUsername())) {
-                System.out.println("User already exists");
-                return false;
+        for (User existingUser : users) {
+            if (existingUser.getUsername().equals(user.getUsername())) {
+                return false; // Username already exists
             }
         }
-
-        user.setPasswordHash(HashUtil.hashPassword(user.getPasswordHash()));  // Hash password before saving
+        user.setPasswordHash(HashUtil.hashPassword(user.getPasswordHash()));  // Hash the password
         users.add(user);
         return saveAllUsersToCSV(users);
     }
 
-    // Login user by checking the hashed password
-    public boolean loginUser(String username, String password) {
+    // Update an existing user
+    public boolean updateUser(User updatedUser) {
         List<User> users = getAllUsers();
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                // Verify the password by comparing the hashed password stored with the hash of input
-                return HashUtil.verifyPassword(password, user.getPasswordHash());
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId() == updatedUser.getId()) {
+                users.set(i, updatedUser);  // Update the user at the correct index
+                return saveAllUsersToCSV(users);
             }
         }
         return false;
     }
 
-    // Validate login for login panel
-    public boolean validateLogin(String username, String password) {
-        return loginUser(username, password);
+    // Remove a user by ID
+    public boolean removeUser(int userId) {
+        List<User> users = getAllUsers();
+        users.removeIf(user -> user.getId() == userId);
+        return saveAllUsersToCSV(users);
     }
 
-    // Get all users from CSV
-    private List<User> getAllUsers() {
+    // Get all users from the CSV file
+    public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
             String line;
+            boolean isFirstLine = true;
             while ((line = br.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false; // Skip the header
+                    continue;
+                }
                 User user = User.fromCSV(line);
                 users.add(user);
             }
@@ -69,9 +75,18 @@ public class UserService {
         return users;
     }
 
-    // Save the list of users back to CSV
+    // Get all staff (users with the role "Staff")
+    public List<User> getAllStaff() {
+        return getAllUsers().stream()
+                .filter(user -> "Staff".equals(user.getRole()))
+                .collect(Collectors.toList());
+    }
+
+    // Save all users to the CSV file
     private boolean saveAllUsersToCSV(List<User> users) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvFilePath))) {
+            bw.write("id,username,passwordHash,firstNameLastInitial,role,hoursWorked");
+            bw.newLine();
             for (User user : users) {
                 bw.write(user.toCSV());
                 bw.newLine();
@@ -83,5 +98,6 @@ public class UserService {
         }
     }
 }
+
 
 
