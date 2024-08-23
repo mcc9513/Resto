@@ -6,6 +6,8 @@ import com.restaurant.service.TableService;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public class TableManagementPanel extends JPanel {
@@ -22,7 +24,7 @@ public class TableManagementPanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Create table model with column names
-        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Table ID", "Status", "Customer Name"}, 0);
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Table ID", "Status", "Customer Name", "Reservation Date", "Reservation Time"}, 0);
         JTable tableTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tableTable);
         add(scrollPane, BorderLayout.CENTER);
@@ -71,7 +73,13 @@ public class TableManagementPanel extends JPanel {
         List<Table> tables = tableService.getAllTables();  // Fetch from table service
         tableModel.setRowCount(0);  // Clear current data
         for (Table table : tables) {
-            tableModel.addRow(new Object[]{table.getTableId(), table.getStatus(), table.getCustomerName()});
+            tableModel.addRow(new Object[]{
+                    table.getTableId(),
+                    table.getStatus(),
+                    table.getCustomerName(),
+                    table.getDate() != null ? table.getDate().toString() : "",
+                    table.getTime() != null ? table.getTime().toString() : ""
+            });
         }
     }
 
@@ -98,8 +106,31 @@ public class TableManagementPanel extends JPanel {
             String[] statuses = {"Open", "Seated", "Reserved"};
             String newStatus = (String) JOptionPane.showInputDialog(this, "Select Status:", "Change Status",
                     JOptionPane.QUESTION_MESSAGE, null, statuses, statuses[0]);
+
             if (newStatus != null) {
-                tableService.changeTableStatus(tableId, newStatus);  // Update the table status
+                if (newStatus.equals("Reserved")) {
+                    String reservationDateStr = JOptionPane.showInputDialog(this, "Enter Reservation Date (YYYY-MM-DD):");
+                    String reservationTimeStr = JOptionPane.showInputDialog(this, "Enter Reservation Time (HH:MM):");
+
+                    if (reservationDateStr != null && reservationTimeStr != null) {
+                        try {
+                            LocalDate reservationDate = LocalDate.parse(reservationDateStr);
+                            LocalTime reservationTime = LocalTime.parse(reservationTimeStr);
+
+                            tableModel.setValueAt(newStatus, selectedRow, tableModel.findColumn("Status"));
+                            tableModel.setValueAt(reservationDate.toString(), selectedRow, tableModel.findColumn("Reservation Date"));
+                            tableModel.setValueAt(reservationTime.toString(), selectedRow, tableModel.findColumn("Reservation Time"));
+
+                            // Update the table status with date and time in the service
+                            tableService.changeTableStatus(tableId, newStatus, reservationDate, reservationTime);
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(this, "Invalid date or time format.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } else {
+                    tableModel.setValueAt(newStatus, selectedRow, tableModel.findColumn("Status"));
+                    tableService.changeTableStatus(tableId, newStatus);  // Update the table status
+                }
                 loadTableData(tableModel);  // Refresh table data
             }
         } else {
@@ -119,6 +150,3 @@ public class TableManagementPanel extends JPanel {
         }
     }
 }
-
-
-
