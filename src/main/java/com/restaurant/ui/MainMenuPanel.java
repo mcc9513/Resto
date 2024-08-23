@@ -71,14 +71,22 @@ public class MainMenuPanel extends JPanel {
         reportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Reports");
+                if ("Manager".equals(currentUser.getRole())) {
+                    cardLayout.show(mainPanel, "Staff");
+                } else {
+                    JOptionPane.showMessageDialog(mainPanel, "Access Denied: Only Managers can access this panel.", "Access Restricted", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 
         inventoryManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Inventory");
+                if ("Manager".equals(currentUser.getRole())) {
+                    cardLayout.show(mainPanel, "Staff");
+                } else {
+                    JOptionPane.showMessageDialog(mainPanel, "Access Denied: Only Managers can access this panel.", "Access Restricted", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 
