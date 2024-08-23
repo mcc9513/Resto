@@ -1,26 +1,31 @@
 package com.restaurant.model;
-import java.time.LocalDate;
+
 import java.time.LocalTime;
 
-
 public class Table {
-    private int tableId;
+    private final int tableId;
+    private final int tableSize;
     private String status;  // Open, Seated, Reserved
-    private String customerName;
-    private LocalDate date;
-    private LocalTime time;
+    private int partySize;
+    private String reservationName;
+    private LocalTime reservationTime;
 
-    public Table(int tableId, String status, String customerName, LocalDate date, LocalTime time) {
+    public Table(int tableId, int tableSize, String status, int partySize, String reservationName, LocalTime reservationTime) {
         this.tableId = tableId;
+        this.tableSize = tableSize;
         this.status = status;
-        this.customerName = customerName;
-        this.date = date;
-        this.time = time;
+        this.partySize = partySize;
+        this.reservationName = reservationName;
+        this.reservationTime = reservationTime;
     }
 
     // Getters and Setters
     public int getTableId() {
         return tableId;
+    }
+
+    public int getTableSize() {
+        return tableSize;
     }
 
     public String getStatus() {
@@ -31,16 +36,27 @@ public class Table {
         this.status = status;
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public int getPartySize() {
+        return partySize;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setPartySize(int partySize) {
+        this.partySize = partySize;
     }
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
-    public LocalTime getTime() { return time; }
-    public void setTime(LocalTime time) { this.time = time; }
 
+    public String getReservationName() {
+        return reservationName;
+    }
+
+    public void setReservationName(String reservationName) {
+        this.reservationName = reservationName;
+    }
+
+    public LocalTime getReservationTime() {
+        return reservationTime;
+    }
+
+    public void setReservationTime(LocalTime reservationTime) {
+        this.reservationTime = reservationTime;
+    }
 }

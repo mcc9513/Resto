@@ -99,7 +99,7 @@ public class OrderService {
                     isFirstLine = false;  // Skip the header
                     continue;
                 }
-                Order order = Order.fromCSV(line); // Load the order, including status
+                Order order = Order.fromCSV(line);
                 orders.add(order);
             }
         } catch (IOException e) {
