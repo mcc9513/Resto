@@ -9,13 +9,8 @@ import java.util.List;
 public class OrderService {
     private List<Order> orders = new ArrayList<>();
     private final String csvFilePath = "orders.csv";  // Path to the orders CSV file
-    private RestaurantController controller;
-    private InventoryService inventoryService;
-
 
     public OrderService() {
-        this.controller = new RestaurantController();
-        this.inventoryService = new InventoryService();
         // Load existing orders from the CSV file at initialization
         loadOrdersFromCSV();
     }
@@ -26,13 +21,12 @@ public class OrderService {
     }
 
     // Add a new order
-    public void addOrder(Order order,MenuService menuService) {
+    public void addOrder(Order order) {
         orders.add(order);
-        inventoryService.reduceIngredientsForMenuItem(order.getMenuItemByName(menuService,order.getMenuItem()));
         saveOrdersToCSV();  // Save to CSV after adding
     }
 
-    // Update an existing order
+    // Update an existing order by ID
     public void updateOrder(int orderId, Order updatedOrder) {
         for (int i = 0; i < orders.size(); i++) {
             if (orders.get(i).getOrderId() == orderId) {
@@ -74,7 +68,7 @@ public class OrderService {
     private void saveOrdersToCSV() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvFilePath))) {
             // Write header
-            bw.write("OrderID,TableID,MenuItem,Quantity");
+            bw.write("OrderID,TableID,MenuItem,Quantity,Status"); // Include Status in header
             bw.newLine();
             // Write each order
             for (Order order : orders) {
@@ -101,7 +95,7 @@ public class OrderService {
                     isFirstLine = false;  // Skip the header
                     continue;
                 }
-                Order order = Order.fromCSV(line);
+                Order order = Order.fromCSV(line); // Load the order, including status
                 orders.add(order);
             }
         } catch (IOException e) {
@@ -109,3 +103,4 @@ public class OrderService {
         }
     }
 }
+
