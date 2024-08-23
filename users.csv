@@ -2,3 +2,5 @@ id,username,passwordHash,firstNameLastInitial,role,hoursWorked
 1,nichh,75K3eLr+dx6JJFuJ7LwIpEpOFmwGZZkRiB84PURz6U8=,NichH,Manager,100.0
 2,alexx,GsEXgo9gyaUnwV9R3LK3mUo6zpEHFN8ieuox9I9N3Eg=,AlexC,Staff,60.0
 3,test,LP+YKlhESNm3brr4lQWQXWNeAAJz3gMT9pOfMj01dcU=,t.,Staff,12.0
+4,test1,G08OmFGXGZjnMgeFRMlrNsPQHO33yqMyNZ1vHYNWcBQ=,t.,Manager,25.0
+5,peter,test2,p.,staff,900000.0

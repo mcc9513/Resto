@@ -1,1 +1,4 @@
 OrderID,TableID,MenuItem,Quantity,Status
+1,1,Spinach Dip and Chips,34,Waiting
+2,4,Buffalo Wings,67,Served
+3,6,Chocolate Lava Cake,100,Waiting
