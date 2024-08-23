@@ -26,7 +26,10 @@ public class Manager extends User {
     public String toCSV() {
         return getId() + "," + getUsername() + "," + getPasswordHash() + "," + getFirstNameLastInitial() + "," + getRole() + "," + getHoursWorked();
     }
+
+    // Fix the isManager method
+    public boolean isManager() {
+        return "Manager".equals(getRole());  // Use role to determine managerial status
+    }
+
 }
-
-
-
