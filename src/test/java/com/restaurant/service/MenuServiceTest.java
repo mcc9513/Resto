@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MenuServiceTest {
 
     private MenuService menuService;
-    private static final String TEST_MENU_FILE = "TestMenu.csv";
+    private static final String TEST_MENU_FILE = "Resto/TestMenu.csv";
 
     @BeforeEach
     void setUp() throws NoSuchFieldException, IllegalAccessException {

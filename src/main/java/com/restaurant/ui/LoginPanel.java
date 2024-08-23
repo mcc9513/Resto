@@ -10,7 +10,7 @@ public class LoginPanel extends JPanel {
     public JTextField usernameField;
     public JPasswordField passwordField;
     public JButton loginButton, resetButton;
-    private JLabel statusLabel;
+    JLabel statusLabel;
     private LoginService loginService;
 
     public LoginPanel(JFrame frame, LoginService loginService) {

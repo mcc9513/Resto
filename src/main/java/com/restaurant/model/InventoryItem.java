@@ -24,7 +24,7 @@ public class InventoryItem {
         this.quantity = quantity;
         this.threshold = threshold;
         this.price = price;
-    }
+    } // Not tested. Need to find its usage to test fully
 
     public InventoryItem(String itemName, int quantity, int threshold) {
         this.itemName = itemName;

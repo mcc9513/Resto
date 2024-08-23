@@ -117,7 +117,7 @@ public class OrderManagementPanel extends JPanel {
 
                 // Create new order and add it
                 int orderId = orderService.getNextOrderId();  // Generate a new order ID
-                Order newOrder = new Order(orderId, tableId, menuItem, quantity);
+                Order newOrder = new Order(orderId, tableId, menuItem, quantity, "waiting");
                 orderService.addOrder(newOrder, menuService);
                 loadOrderData();  // Reload the table
             } catch (NumberFormatException e) {
