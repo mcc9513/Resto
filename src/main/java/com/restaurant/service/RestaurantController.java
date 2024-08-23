@@ -56,12 +56,9 @@ public class RestaurantController {
         try (BufferedReader br = new BufferedReader(new FileReader("inventory.csv"))) {
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("Item Name")) continue; // Skip header line
-                String[] data = line.split(",");
-                String itemName = data[1];
-                int quantity = Integer.parseInt(data[2]);
-                int threshold = Integer.parseInt(data[3]);
-                inventory.put(itemName, new InventoryItem(itemName, quantity, threshold));
+                if (line.startsWith("Item ID")) continue; // Skip header line
+                InventoryItem item = InventoryItem.fromCSV(line);
+                inventory.put(item.getItemName(), item);
             }
         } catch (IOException e) {
             System.out.println("Error loading inventory: " + e.getMessage());
@@ -74,7 +71,7 @@ public class RestaurantController {
             bw.write("Item Name,Quantity,Threshold,Price");
             bw.newLine();
             for (InventoryItem item : inventory.values()) {
-                bw.write(item.getItemName() + "," + item.getQuantity() + "," + item.getThreshold() + "," + item.getPrice());
+                bw.write(item.toCSV());
                 bw.newLine();
             }
         } catch (IOException e) {
@@ -98,7 +95,7 @@ public class RestaurantController {
                 InventoryItem inventoryItem = inventory.get(ingredient);
                 if (inventoryItem != null) {
                     if (!inventoryItem.reduceStock(1)) {
-                        allItemsAvailable = true;
+                        allItemsAvailable = false;
                     }
                 } else {
                     System.out.println("Inventory item for " + ingredient + " not found.");

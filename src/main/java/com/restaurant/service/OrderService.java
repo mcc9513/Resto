@@ -9,8 +9,10 @@ import java.util.List;
 public class OrderService {
     private List<Order> orders = new ArrayList<>();
     private final String csvFilePath = "orders.csv";  // Path to the orders CSV file
+    private RestaurantController controller;
 
     public OrderService() {
+        this.controller = controller;
         // Load existing orders from the CSV file at initialization
         loadOrdersFromCSV();
     }
@@ -23,6 +25,8 @@ public class OrderService {
     // Add a new order
     public void addOrder(Order order) {
         orders.add(order);
+        InventoryService inv = new InventoryService();
+        inv.reduceIngredientsForMenuItem(order.getMenuItem());
         saveOrdersToCSV();  // Save to CSV after adding
     }
 
