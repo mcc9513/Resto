@@ -47,20 +47,4 @@ public class MenuItem {
     public void setName(String name) {
         this.name = name;
     }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setPreparationTime(int preparationTime) {
-        this.preparationTime = preparationTime;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setIngredients(List<String> ingredients) {
-        this.ingredients = new ArrayList<>(ingredients);
-    }
 }

@@ -1,79 +1,52 @@
 package com.restaurant.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.restaurant.service.MenuService;
+
 
 public class Order {
     private int orderId;
-    private List<MenuItem> itemsOrdered;
-    private double totalPrice;
-    private String status;
     private int tableId;
+    private String menuItem;
+    private int quantity;
 
-
-    // Constructor
-    public Order(int orderID, int tableID) {
-        this.orderId = orderID;
-        this.tableId = tableID;
-        this.itemsOrdered = new ArrayList<>();
-        this.totalPrice = 0.0;
-        this.status = "Waiting";
+    public Order(int orderId, int tableId, String menuItem, int quantity) {
+        this.orderId = orderId;
+        this.tableId = tableId;
+        this.menuItem = menuItem;
+        this.quantity = quantity;
     }
 
-    // Empty Constructor for Edge Cases
-    public Order() {
-
+    // Convert an order to a CSV string
+    public String toCSV() {
+        return orderId + "," + tableId + "," + menuItem + "," + quantity;
     }
 
-    // Add an item to the order
-    public void addItem(MenuItem item) {
-        itemsOrdered.add(item);
-        calculateTotalPrice();
-    }
+    // Create an order from a CSV string
+    public static Order fromCSV(String line) {
+        String[] parts = line.split(",");
+        int orderId = Integer.parseInt(parts[0]);
+        int tableId = Integer.parseInt(parts[1]);
+        String menuItem = parts[2];
+        int quantity = Integer.parseInt(parts[3]);
 
-    // Remove an item from the order
-    public boolean removeItem(MenuItem item) {
-        if (itemsOrdered.remove(item)) {
-            calculateTotalPrice();
-            return true;
-        }
-        return false;
-    }
-
-    // Calculate the total price of the order
-    private void calculateTotalPrice() {
-        totalPrice = 0.0;
-        for (MenuItem item : itemsOrdered) {
-            totalPrice += item.getPrice();
-        }
+        return new Order(orderId, tableId, menuItem, quantity);
     }
 
     // Getters and setters
-    public int getOrderId() {
-        return orderId;
-    }
+    public int getOrderId() { return orderId; }
+    public int getTableId() { return tableId; }
+    public String getMenuItem() { return menuItem; }
+    public int getQuantity() { return quantity; }
 
-    public List<MenuItem> getItemsOrdered() {
-        return itemsOrdered;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public int getTableId() {
-        return tableId;
-    }
-
-    public void setTableId(int tableId) {
-        this.tableId = tableId;
+    // Method to calculate the total price of the order
+    public double getTotalPrice(MenuService menuService) {
+        MenuItem menuItem = menuService.getMenuItemByName(this.menuItem);
+        if (menuItem != null) {
+            return menuItem.getPrice() * this.quantity;
+        }
+        return 0.0;
     }
 }
+
+
+

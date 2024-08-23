@@ -1,0 +1,7 @@
+Restaurant Sales Report
+-------------------------------
+Total Orders Placed: 1
+Total Inventory Count: 18
+Total Inventory Value: $343.8
+Total Sales Value: $17.98
+-------------------------------
