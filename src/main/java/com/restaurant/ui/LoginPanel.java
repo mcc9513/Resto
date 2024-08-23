@@ -91,12 +91,15 @@ public class LoginPanel extends JPanel {
         User authenticatedUser = loginService.login(username, password);
         if (authenticatedUser != null) { // User authenticated
             statusLabel.setText("Login successful!");
+            resetFields(); // Clear fields after successful login
+
             // Trigger navigation to the main menu or next panel
             // This can be done by calling a method in the parent window that handles the panel switching
         } else { // Invalid credentials
             statusLabel.setText("Invalid username or password.");
         }
     }
+
 
     private void resetFields() {
         usernameField.setText("");

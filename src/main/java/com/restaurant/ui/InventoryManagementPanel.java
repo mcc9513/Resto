@@ -5,6 +5,7 @@ import com.restaurant.service.InventoryService;
 import com.restaurant.service.RestaurantController;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
@@ -37,6 +38,7 @@ public class InventoryManagementPanel extends JPanel {
         JButton deleteButton = new JButton("Delete Item");
         JButton backButton = new JButton("Back to Main Menu");
         JButton logoutButton = new JButton("Logout");
+        JButton reloadButton = new JButton("Reload Inventory");
 
         // Add buttons to the button panel
         buttonPanel.add(addButton);
@@ -44,9 +46,13 @@ public class InventoryManagementPanel extends JPanel {
         buttonPanel.add(deleteButton);
         buttonPanel.add(backButton);
         buttonPanel.add(logoutButton);
+        buttonPanel.add(reloadButton);
 
         // Add button panel to the bottom of the panel
         add(buttonPanel, BorderLayout.SOUTH);
+
+        // Set custom renderer to highlight rows with quantity < threshold
+        inventoryTable.setDefaultRenderer(Object.class, new CustomRenderer());
 
         // Load data into the table
         loadInventoryData();
@@ -57,6 +63,7 @@ public class InventoryManagementPanel extends JPanel {
         deleteButton.addActionListener(e -> deleteItem());
         backButton.addActionListener(e -> returnToMainMenu());
         logoutButton.addActionListener(e -> logout());
+        reloadButton.addActionListener(e -> loadInventoryData());
     }
 
     // Load data from CSV into the table
@@ -69,7 +76,27 @@ public class InventoryManagementPanel extends JPanel {
         }
     }
 
-    // Add new item method (You can add more detailed dialog input fields)
+    // Custom cell renderer to highlight rows with quantity less than threshold
+    private class CustomRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            int quantity = (int) table.getValueAt(row, 2);  // Quantity column index
+            int threshold = (int) table.getValueAt(row, 3); // Threshold column index
+
+            // Highlight row in yellow if quantity is less than threshold
+            if (quantity < threshold) {
+                c.setBackground(Color.YELLOW);
+            } else {
+                c.setBackground(Color.WHITE); // Reset background for other rows
+            }
+
+            return c;
+        }
+    }
+
+    // Add new item method
     void addItem() {
         String itemName = JOptionPane.showInputDialog("Enter item name:");
         String quantityStr = JOptionPane.showInputDialog("Enter quantity:");

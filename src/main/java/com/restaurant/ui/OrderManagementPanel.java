@@ -29,8 +29,8 @@ public class OrderManagementPanel extends JPanel {
         // Set layout for the panel
         setLayout(new BorderLayout());
 
-        // Create table model with column names
-        tableModel = new DefaultTableModel(new String[]{"Order ID", "Table ID", "Menu Item", "Quantity"}, 0);
+        // Create table model with column names, including "Status"
+        tableModel = new DefaultTableModel(new String[]{"Order ID", "Table ID", "Menu Item", "Quantity", "Status"}, 0);
         orderTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(orderTable);
         add(scrollPane, BorderLayout.CENTER);
@@ -51,6 +51,11 @@ public class OrderManagementPanel extends JPanel {
             }
         });
         buttonPanel.add(createOrderButton);
+
+        // Button to update the status of an order
+        JButton updateStatusButton = new JButton("Update Status");
+        updateStatusButton.addActionListener(e -> updateOrderStatus());
+        buttonPanel.add(updateStatusButton);
 
         // Button to delete an order
         JButton deleteOrderButton = new JButton("Delete Order");
@@ -79,8 +84,27 @@ public class OrderManagementPanel extends JPanel {
     private void loadOrderData() {
         tableModel.setRowCount(0); // Clear existing rows
         List<Order> orders = orderService.getAllOrders();
-        for (Order order : orders) {
-            tableModel.addRow(new Object[]{order.getOrderId(), order.getTableId(), order.getMenuItem(), order.getQuantity()});
+
+        if (orders != null) { // Check if orders is not null
+            for (Order order : orders) {
+                if (order.getMenuItem() != null) { // Ensure menuItem is not null
+                    tableModel.addRow(new Object[]{
+                            order.getOrderId(),
+                            order.getTableId(),
+                            order.getMenuItem().getName(),  // Use getName() to display the menu item name
+                            order.getQuantity(),
+                            order.getStatus() // Display status
+                    });
+                } else {
+                    tableModel.addRow(new Object[]{
+                            order.getOrderId(),
+                            order.getTableId(),
+                            "Unknown",  // Handle the case where menuItem is null
+                            order.getQuantity(),
+                            order.getStatus() // Display status even if menu item is unknown
+                    });
+                }
+            }
         }
     }
 
@@ -111,18 +135,41 @@ public class OrderManagementPanel extends JPanel {
         if (result == JOptionPane.OK_OPTION) {
             try {
                 int tableId = (int) tableIdDropdown.getSelectedItem();
-                String menuItem = (String) menuItemDropdown.getSelectedItem();
-                MenuItem myitem= menuService.getMenuItemByName(menuItem);
+                String menuItemName = (String) menuItemDropdown.getSelectedItem();
+                MenuItem menuItem = menuService.getMenuItemByName(menuItemName);
                 int quantity = Integer.parseInt(quantityField.getText().trim());
 
-                // Create new order and add it
+                // Create new order and add it with "waiting" status
                 int orderId = orderService.getNextOrderId();  // Generate a new order ID
-                Order newOrder = new Order(orderId, tableId, menuItem, quantity, "waiting");
-                orderService.addOrder(newOrder, menuService);
+                Order newOrder = new Order(orderId, tableId, menuItemName, quantity, "waiting");
+                orderService.addOrder(newOrder);
                 loadOrderData();  // Reload the table
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid input for quantity.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+    // Update the status of the selected order
+    private void updateOrderStatus() {
+        int selectedRow = orderTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int orderId = (int) tableModel.getValueAt(selectedRow, 0);  // Get the order ID
+            Order order = orderService.getOrderById(orderId);  // Get the order by ID
+
+            // Create a dialog to select the new status
+            String[] statuses = {"Waiting", "Served"};
+            String newStatus = (String) JOptionPane.showInputDialog(this,
+                    "Select new status:", "Update Status",
+                    JOptionPane.PLAIN_MESSAGE, null, statuses, order.getStatus());
+
+            if (newStatus != null && !newStatus.equals(order.getStatus())) {
+                order.setStatus(newStatus);  // Update the order status
+                orderService.updateOrder(order);  // Save the updated order
+                loadOrderData();  // Reload the table
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select an order to update.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -141,5 +188,9 @@ public class OrderManagementPanel extends JPanel {
         }
     }
 }
+
+
+
+
 
 

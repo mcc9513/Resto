@@ -1,3 +1,5 @@
 OrderID,TableID,MenuItem,Quantity,Status
-1,1,null,1,Served
-2,1,com.restaurant.model.MenuItem@39a6be6b,2,Waiting
+1,1,Spinach Dip and Chips,1,Served
+2,3,Spinach Dip and Chips,1,Served
+3,1,Spinach Dip and Chips,1,Served
+4,1,Spinach Dip and Chips,1,Served

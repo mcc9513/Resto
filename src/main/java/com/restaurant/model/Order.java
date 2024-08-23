@@ -20,7 +20,7 @@ public class Order {
 
     // Convert an order to a CSV string
     public String toCSV() {
-        return orderId + "," + tableId + "," + menuItem + "," + quantity + "," + status; // Include status in CSV
+        return orderId + "," + tableId + "," + menuItem.getName() + "," + quantity + "," + status; // Use menuItem.getName()
     }
 
     // Create an order from a CSV string
@@ -28,7 +28,7 @@ public class Order {
         String[] parts = line.split(",");
         int orderId = Integer.parseInt(parts[0]);
         int tableId = Integer.parseInt(parts[1]);
-        String menuItem = parts[2];
+        String menuItem = parts[2]; // This is the menuItem name in string form
         int quantity = Integer.parseInt(parts[3]);
         String status = parts[4]; // Extract status from CSV
 
@@ -50,21 +50,13 @@ public class Order {
 
     // Method to calculate the total price of the order
     public double getTotalPrice(MenuService menuService) {
-        MenuItem menuItem = this.menuItem; // menuService.getMenuItemByName(this.menuItem);
         if (menuItem != null) {
             return menuItem.getPrice() * this.quantity;
         }
         return 0.0;
     }
-    public MenuItem getMenuItemByName(MenuService menuService,String name) {
-        MenuItem menuItem = menuService.getMenuItemByName(name);
-        return menuItem;
-    }
-
-    public MenuItem getMenuItemObject (MenuService menuService) {
-        return menuService.getMenuItemByName(this.menuItem);
-    }
 }
+
 
 
 

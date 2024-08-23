@@ -31,10 +31,10 @@ public class OrderService {
     }
 
     // Update an existing order by ID
-    public void updateOrder(int orderId, Order updatedOrder) {
+    public void updateOrder(Order updatedOrder) {
         for (int i = 0; i < orders.size(); i++) {
-            if (orders.get(i).getOrderId() == orderId) {
-                orders.set(i, updatedOrder);
+            if (orders.get(i).getOrderId() == updatedOrder.getOrderId()) {
+                orders.set(i, updatedOrder);  // Update the order with the new status
                 break;
             }
         }
@@ -42,7 +42,7 @@ public class OrderService {
     }
 
     // Get a specific order by ID
-    public Order getOrder(int orderId) {
+    public Order getOrderById(int orderId) {
         for (Order order : orders) {
             if (order.getOrderId() == orderId) {
                 return order;
@@ -107,4 +107,5 @@ public class OrderService {
         }
     }
 }
+
 
