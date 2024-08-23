@@ -6,7 +6,6 @@ import com.restaurant.util.HashUtil;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserService {
     private final String csvFilePath = "users.csv";
@@ -73,13 +72,6 @@ public class UserService {
             e.printStackTrace();
         }
         return users;
-    }
-
-    // Get all staff (users with the role "Staff")
-    public List<User> getAllStaff() {
-        return getAllUsers().stream()
-                .filter(user -> "Staff".equals(user.getRole()))
-                .collect(Collectors.toList());
     }
 
     // Save all users to the CSV file

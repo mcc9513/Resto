@@ -2,64 +2,83 @@ package com.restaurant.service;
 
 import com.restaurant.model.Table;
 
-import java.util.HashMap;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.time.LocalTime;
 
 public class TableService {
-    private Map<Integer, Table> tables; // Stores tables keyed by table ID
+    private List<Table> tables;
 
     public TableService() {
-        this.tables = new HashMap<>();
-        // Initialize with 13 tables by default
-        initTables();
-    }
-
-    // Initialize 13 tables with default "Open" status and no customer
-    private void initTables() {
+        this.tables = new ArrayList<>();
+        // Prepopulate tables with IDs 1 through 13 and assign table sizes
         for (int i = 1; i <= 13; i++) {
-            tables.put(i, new Table(i, "Open", null));  // Table ID, Status, Customer Name
+            int tableSize = (i <= 6) ? 4 : 6;
+            tables.add(new Table(i, tableSize, "Open", 0, null, null));
         }
     }
 
-    // Get all tables
     public List<Table> getAllTables() {
-        return tables.values().stream().collect(Collectors.toList());
+        return tables;
     }
 
-    // Assign a customer name to the table
-    public void assignCustomer(int tableId, String customerName) {
-        Table table = tables.get(tableId);
-        if (table == null) {
-            throw new IllegalArgumentException("Table does not exist.");
+    public boolean changeTableStatusToReserved(int tableId, int partySize, String reservationName, LocalTime reservationTime) {
+        Optional<Table> tableOpt = tables.stream().filter(t -> t.getTableId() == tableId).findFirst();
+        if (tableOpt.isPresent()) {
+            Table table = tableOpt.get();
+            if (partySize > table.getTableSize()) {
+                return false; // Party size exceeds table size
+            }
+            table.setStatus("Reserved");
+            table.setPartySize(partySize);
+            table.setReservationName(reservationName);
+            table.setReservationTime(reservationTime);
+            updateCSVFile(table);
+            table.setStatus("Open"); // Revert status to Open after updating the reservation
+            return true;
         }
-        table.setCustomerName(customerName);  // Assign customer name
-        table.setStatus("Seated");  // Change status to "Seated"
+        return false;
     }
 
-    // Change the status of a table
-    public void changeTableStatus(int tableId, String status) {
-        Table table = tables.get(tableId);
-        if (table == null) {
-            throw new IllegalArgumentException("Table does not exist.");
+    public boolean changeTableStatusToSeated(int tableId, int partySize) {
+        Optional<Table> tableOpt = tables.stream().filter(t -> t.getTableId() == tableId).findFirst();
+        if (tableOpt.isPresent()) {
+            Table table = tableOpt.get();
+            if (partySize > table.getTableSize()) {
+                return false; // Party size exceeds table size
+            }
+            table.setStatus("Seated");
+            table.setPartySize(partySize);
+            // Do not revert the status; it remains as "Seated"
+            return true;
         }
-        table.setStatus(status);  // Update status (Open, Reserved, etc.)
+        return false;
     }
 
-    // Clear the table (set status to "Open" and remove the customer name)
     public void clearTable(int tableId) {
-        Table table = tables.get(tableId);
-        if (table == null) {
-            throw new IllegalArgumentException("Table does not exist.");
-        }
-        table.setStatus("Open");  // Reset status to "Open"
-        table.setCustomerName(null);  // Remove the customer name
+        Optional<Table> tableOpt = tables.stream().filter(t -> t.getTableId() == tableId).findFirst();
+        tableOpt.ifPresent(table -> {
+            table.setStatus("Open");
+            table.setPartySize(0);
+            table.setReservationName(null);
+            table.setReservationTime(null);
+        });
     }
 
-    // Get a table by its ID
-    public Table getTable(int tableId) {
-        return tables.get(tableId);
+    private void updateCSVFile(Table table) {
+        try (FileWriter csvWriter = new FileWriter("reservations.csv", true)) {
+            csvWriter.append(String.join(",",
+                    String.valueOf(table.getTableId()),
+                    String.valueOf(table.getPartySize()),
+                    table.getReservationName() != null ? table.getReservationName() : "",
+                    table.getReservationTime() != null ? table.getReservationTime().toString() : ""
+            ));
+            csvWriter.append("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
-

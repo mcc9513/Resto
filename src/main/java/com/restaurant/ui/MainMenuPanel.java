@@ -24,8 +24,8 @@ public class MainMenuPanel extends JPanel {
         this.mainPanel = mainPanel;
         this.currentUser = currentUser;  // Track the current user
 
-        // Set up the layout
-        setLayout(new GridLayout(2, 4));  // Two rows and four columns for buttons
+        // Set up the layout with 2 rows and 5 columns
+        setLayout(new GridLayout(2, 5));  // Two rows and five columns for buttons and the image
 
         // Initialize buttons
         menuManagementButton = new JButton("Menu Management");
@@ -45,32 +45,40 @@ public class MainMenuPanel extends JPanel {
         add(tableManagementButton);
         add(logoutButton);
 
+        // Load the logo image from the resources folder
+        ImageIcon logoIcon = new ImageIcon(getClass().getClassLoader().getResource("restologo.png")); // Load the image
+        JLabel logoLabel = new JLabel(logoIcon);
+        logoLabel.setHorizontalAlignment(JLabel.CENTER);  // Center the logo
+
+        // Add the logo after the logout button on the same row
+        add(logoLabel);
+
         // Add action listeners to buttons to navigate between panels
         menuManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Menu");
+                cardLayout.show(mainPanel, "Menu");  // Correctly switch to "Menu" panel
             }
         });
 
         orderManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Orders");
+                cardLayout.show(mainPanel, "Orders");  // Correctly switch to "Orders" panel
             }
         });
 
         reportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Reports");
+                cardLayout.show(mainPanel, "Reports");  // Correctly switch to "Reports" panel
             }
         });
 
         inventoryManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Inventory");
+                cardLayout.show(mainPanel, "Inventory");  // Correctly switch to "Inventory" panel
             }
         });
 
@@ -79,7 +87,7 @@ public class MainMenuPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 // Check if the current user has the role "Manager"
                 if ("Manager".equals(currentUser.getRole())) {
-                    cardLayout.show(mainPanel, "Staff");
+                    cardLayout.show(mainPanel, "Staff");  // Correctly switch to "Staff" panel
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Access Denied: Only Managers can access this panel.", "Access Restricted", JOptionPane.WARNING_MESSAGE);
                 }
@@ -89,14 +97,14 @@ public class MainMenuPanel extends JPanel {
         tableManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Tables");
+                cardLayout.show(mainPanel, "Tables");  // Correctly switch to "Tables" panel
             }
         });
 
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainPanel, "Login");
+                cardLayout.show(mainPanel, "Login");  // Correctly switch to "Login" panel
             }
         });
     }

@@ -1,5 +1,8 @@
 package com.restaurant.model;
 
+import com.restaurant.service.MenuService;
+
+
 public class Order {
     private int orderId;
     private int tableId;
@@ -35,10 +38,23 @@ public class Order {
     public String getMenuItem() { return menuItem; }
     public int getQuantity() { return quantity; }
 
-    public void setOrderId(int orderId) { this.orderId = orderId; }
-    public void setTableId(int tableId) { this.tableId = tableId; }
-    public void setMenuItem(String menuItem) { this.menuItem = menuItem; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    // Method to calculate the total price of the order
+    public double getTotalPrice(MenuService menuService) {
+        MenuItem menuItem = menuService.getMenuItemByName(this.menuItem);
+        if (menuItem != null) {
+            return menuItem.getPrice() * this.quantity;
+        }
+        return 0.0;
+    }
+    public MenuItem getMenuItemByName(MenuService menuService,String name) {
+        MenuItem menuItem = menuService.getMenuItemByName(name);
+        return menuItem;
+    }
+
+    public MenuItem getMenuItemObject (MenuService menuService) {
+        return menuService.getMenuItemByName(this.menuItem);
+    }
 }
+
 
 

@@ -6,6 +6,7 @@ import com.restaurant.service.TableService;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.time.LocalTime;
 import java.util.List;
 
 public class TableManagementPanel extends JPanel {
@@ -22,7 +23,7 @@ public class TableManagementPanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Create table model with column names
-        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Table ID", "Status", "Customer Name"}, 0);
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Table ID", "Table Size", "Status", "Party Size", "Reservation Name", "Reservation Time"}, 0);
         JTable tableTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(tableTable);
         add(scrollPane, BorderLayout.CENTER);
@@ -32,11 +33,6 @@ public class TableManagementPanel extends JPanel {
 
         // Panel for buttons
         JPanel buttonPanel = new JPanel();
-
-        // Button to assign customer
-        JButton assignButton = new JButton("Assign Customer");
-        assignButton.addActionListener(e -> assignCustomer(tableTable, tableModel));
-        buttonPanel.add(assignButton);
 
         // Button to change table status
         JButton changeStatusButton = new JButton("Change Status");
@@ -71,22 +67,14 @@ public class TableManagementPanel extends JPanel {
         List<Table> tables = tableService.getAllTables();  // Fetch from table service
         tableModel.setRowCount(0);  // Clear current data
         for (Table table : tables) {
-            tableModel.addRow(new Object[]{table.getTableId(), table.getStatus(), table.getCustomerName()});
-        }
-    }
-
-    // Assign a customer to the selected table
-    private void assignCustomer(JTable tableTable, DefaultTableModel tableModel) {
-        int selectedRow = tableTable.getSelectedRow();
-        if (selectedRow >= 0) {
-            int tableId = (int) tableModel.getValueAt(selectedRow, 0);
-            String customerName = JOptionPane.showInputDialog(this, "Enter Customer Name:");
-            if (customerName != null && !customerName.trim().isEmpty()) {
-                tableService.assignCustomer(tableId, customerName);  // Update the table with customer name
-                loadTableData(tableModel);  // Refresh table data
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select a table to assign a customer.", "Warning", JOptionPane.WARNING_MESSAGE);
+            tableModel.addRow(new Object[]{
+                    table.getTableId(),
+                    table.getTableSize(),
+                    table.getStatus(),
+                    table.getPartySize(),
+                    table.getReservationName(),
+                    table.getReservationTime() != null ? table.getReservationTime().toString() : ""
+            });
         }
     }
 
@@ -98,9 +86,47 @@ public class TableManagementPanel extends JPanel {
             String[] statuses = {"Open", "Seated", "Reserved"};
             String newStatus = (String) JOptionPane.showInputDialog(this, "Select Status:", "Change Status",
                     JOptionPane.QUESTION_MESSAGE, null, statuses, statuses[0]);
+
             if (newStatus != null) {
-                tableService.changeTableStatus(tableId, newStatus);  // Update the table status
-                loadTableData(tableModel);  // Refresh table data
+                if (newStatus.equals("Reserved")) {
+                    String partySizeStr = JOptionPane.showInputDialog(this, "Enter Party Size:");
+                    String reservationName = JOptionPane.showInputDialog(this, "Enter Reservation Name:");
+                    String reservationTimeStr = JOptionPane.showInputDialog(this, "Enter Reservation Time (HH:MM):");
+
+                    if (partySizeStr != null && reservationName != null && reservationTimeStr != null) {
+                        try {
+                            int partySize = Integer.parseInt(partySizeStr);
+                            LocalTime reservationTime = LocalTime.parse(reservationTimeStr);
+
+                            if (!tableService.changeTableStatusToReserved(tableId, partySize, reservationName, reservationTime)) {
+                                JOptionPane.showMessageDialog(this, "Party size exceeds table size.", "Error", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                loadTableData(tableModel);  // Refresh table data
+                            }
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(this, "Invalid input format.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } else if (newStatus.equals("Seated")) {
+                    String partySizeStr = JOptionPane.showInputDialog(this, "Enter Party Size:");
+
+                    if (partySizeStr != null) {
+                        try {
+                            int partySize = Integer.parseInt(partySizeStr);
+
+                            if (!tableService.changeTableStatusToSeated(tableId, partySize)) {
+                                JOptionPane.showMessageDialog(this, "Party size exceeds table size.", "Error", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                loadTableData(tableModel);  // Refresh table data
+                            }
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(this, "Invalid input format.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } else {
+                    tableService.clearTable(tableId);  // Reset to Open
+                    loadTableData(tableModel);  // Refresh table data
+                }
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please select a table to change status.", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -119,6 +145,3 @@ public class TableManagementPanel extends JPanel {
         }
     }
 }
-
-
-

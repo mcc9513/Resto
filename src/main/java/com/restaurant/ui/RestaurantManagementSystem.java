@@ -15,8 +15,6 @@ public class RestaurantManagementSystem {
     private UserService userService;
     private TableService tableService;
     private OrderService orderService;  // Add OrderService
-    private MenuService menuService;
-    private RestaurantController controller;
     private User currentUser;
 
     public RestaurantManagementSystem() {
@@ -26,7 +24,9 @@ public class RestaurantManagementSystem {
         userService = new UserService();
         tableService = new TableService();
         orderService = new OrderService();  // Initialize OrderService
-        controller = new RestaurantController();
+        MenuService menuService = new MenuService();  // Initialize MenuService
+        ReportService reportService = new ReportService(orderService, inventoryService);
+
 
         // Set up the main JFrame
         frame = new JFrame("Restaurant Management System");
@@ -38,17 +38,14 @@ public class RestaurantManagementSystem {
         mainPanel = new JPanel(cardLayout);
 
         // Create all the panels and pass JFrame to those that require it
-        OrderService orderService = new OrderService();
-        MenuService menuService = new MenuService();
         LoginPanel loginPanel = new LoginPanel(frame, loginService);  // Pass JFrame and LoginService
         MainMenuPanel mainMenuPanel = new MainMenuPanel(frame, cardLayout, mainPanel, currentUser, inventoryService); // Pass JFrame
         InventoryManagementPanel inventoryPanel = new InventoryManagementPanel(inventoryService);
-        OrderManagementPanel orderPanel = new OrderManagementPanel(orderService, menuService, cardLayout, mainPanel); // Pass OrderService to OrderManagementPanel
+        OrderManagementPanel orderPanel = new OrderManagementPanel(orderService, menuService, cardLayout, mainPanel); // Pass OrderService and MenuService to OrderManagementPanel
         MenuManagementPanel menuPanel = new MenuManagementPanel(frame, cardLayout, mainPanel, currentUser);
-        ReportPanel reportPanel = new ReportPanel();
-        StaffManagementPanel staffPanel = new StaffManagementPanel(userService, cardLayout, mainPanel); // Pass userService, cardLayout, and mainPanel
+        ReportPanel reportPanel = new ReportPanel(reportService, inventoryService, orderService, menuService, cardLayout, mainPanel);
+        StaffManagementPanel staffPanel = new StaffManagementPanel(userService, cardLayout, mainPanel); // Pass UserService, CardLayout, and MainPanel
         TableManagementPanel tablePanel = new TableManagementPanel(tableService, cardLayout, mainPanel); // Pass TableService
-        RestaurantController controller = new RestaurantController();
 
         // Add all panels to the main panel (CardLayout)
         mainPanel.add(loginPanel, "Login");

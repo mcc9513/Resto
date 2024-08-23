@@ -10,9 +10,12 @@ public class OrderService {
     private List<Order> orders = new ArrayList<>();
     private final String csvFilePath = "orders.csv";  // Path to the orders CSV file
     private RestaurantController controller;
+    private InventoryService inventoryService;
+
 
     public OrderService() {
-        this.controller = controller;
+        this.controller = new RestaurantController();
+        this.inventoryService = new InventoryService();
         // Load existing orders from the CSV file at initialization
         loadOrdersFromCSV();
     }
@@ -23,10 +26,9 @@ public class OrderService {
     }
 
     // Add a new order
-    public void addOrder(Order order) {
+    public void addOrder(Order order,MenuService menuService) {
         orders.add(order);
-        InventoryService inv = new InventoryService();
-        inv.reduceIngredientsForMenuItem(order.getMenuItem());
+        inventoryService.reduceIngredientsForMenuItem(order.getMenuItemByName(menuService,order.getMenuItem()));
         saveOrdersToCSV();  // Save to CSV after adding
     }
 

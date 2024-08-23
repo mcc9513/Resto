@@ -20,6 +20,16 @@ public class LoginPanel extends JPanel {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
+        // Add the logo image above the form
+        ImageIcon logoIcon = new ImageIcon(getClass().getClassLoader().getResource("restologo.png")); // Load the image from resources
+        JLabel logoLabel = new JLabel(logoIcon);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2; // Span across both columns
+        gbc.insets = new Insets(10, 10, 20, 10); // Add some padding below the image
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(logoLabel, gbc);
+
         // Initialize components
         usernameField = new JTextField(15);
         passwordField = new JPasswordField(15);
@@ -30,6 +40,7 @@ public class LoginPanel extends JPanel {
         // Layout setup for username, password, and buttons
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.gridwidth = 1; // Reset to single column
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.EAST;
         add(new JLabel("Username:"), gbc);
@@ -93,3 +104,4 @@ public class LoginPanel extends JPanel {
         statusLabel.setText("Please enter your credentials.");
     }
 }
+

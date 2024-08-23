@@ -10,7 +10,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class OrderManagementPanel extends JPanel {
@@ -113,12 +112,13 @@ public class OrderManagementPanel extends JPanel {
             try {
                 int tableId = (int) tableIdDropdown.getSelectedItem();
                 String menuItem = (String) menuItemDropdown.getSelectedItem();
+                MenuItem myitem= menuService.getMenuItemByName(menuItem);
                 int quantity = Integer.parseInt(quantityField.getText().trim());
 
                 // Create new order and add it
                 int orderId = orderService.getNextOrderId();  // Generate a new order ID
                 Order newOrder = new Order(orderId, tableId, menuItem, quantity);
-                orderService.addOrder(newOrder);
+                orderService.addOrder(newOrder, menuService);
                 loadOrderData();  // Reload the table
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid input for quantity.", "Error", JOptionPane.ERROR_MESSAGE);
