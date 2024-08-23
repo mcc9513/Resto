@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginService {
-    private final String csvFilePath = "Resto/users.csv";
+    private final String csvFilePath = "users.csv";
     private User currentUser;  // Store the currently logged-in user
 
     public LoginService() {
@@ -23,6 +23,25 @@ public class LoginService {
         }
     }
 
+    // Register a new user
+    public boolean registerUser(User user) {
+        List<User> users = getAllUsers();
+        for (User existingUser : users) {
+            if (existingUser.getUsername().equals(user.getUsername())) {
+                return false; // Username already exists
+            }
+        }
+        // Hash the user's password before storing it
+        String hashedPassword = HashUtil.hashPassword(user.getPasswordHash());
+        user.setPasswordHash(hashedPassword);
+
+        // Add the new user to the list
+        users.add(user);
+
+        // Save the updated user list to CSV
+        return saveAllUsersToCSV(users);
+    }
+
     // Authenticate a user based on username and password, return User if successful
     public User login(String username, String password) {
         List<User> users = getAllUsers();
@@ -35,6 +54,11 @@ public class LoginService {
             }
         }
         return null;  // Return null if authentication fails
+    }
+
+    // Get the currently logged-in user
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     // Get all users from the CSV file
@@ -55,5 +79,19 @@ public class LoginService {
             e.printStackTrace();
         }
         return users;
+    }
+
+    // Save all users to the CSV file
+    private boolean saveAllUsersToCSV(List<User> users) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvFilePath))) {
+            for (User user : users) {
+                bw.write(user.toCSV());
+                bw.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

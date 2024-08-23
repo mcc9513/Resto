@@ -1,32 +1,24 @@
 package com.restaurant.ui;
 
-import com.restaurant.model.User;
-import com.restaurant.service.*;
-
 import javax.swing.*;
 import java.awt.*;
+import com.restaurant.service.InventoryService;
+import com.restaurant.service.UserService;
+import com.restaurant.service.LoginService;
+import com.restaurant.model.User;
 
 public class RestaurantManagementSystem {
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel mainPanel;
-    private LoginService loginService;
-    private InventoryService inventoryService;
     private UserService userService;
-    private TableService tableService;
-    private OrderService orderService;  // Add OrderService
-    private User currentUser;
+    private LoginService loginService;
 
     public RestaurantManagementSystem() {
         // Initialize services
-        inventoryService = new InventoryService();
-        loginService = new LoginService();
+        InventoryService inventoryService = new InventoryService();
         userService = new UserService();
-        tableService = new TableService();
-        orderService = new OrderService();  // Initialize OrderService
-        MenuService menuService = new MenuService();  // Initialize MenuService
-        ReportService reportService = new ReportService(orderService, inventoryService);
-
+        loginService = new LoginService();
 
         // Set up the main JFrame
         frame = new JFrame("Restaurant Management System");
@@ -37,21 +29,21 @@ public class RestaurantManagementSystem {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // Create all the panels and pass JFrame to those that require it
-        LoginPanel loginPanel = new LoginPanel(frame, loginService);  // Pass JFrame and LoginService
-        MainMenuPanel mainMenuPanel = new MainMenuPanel(frame, cardLayout, mainPanel, currentUser, inventoryService); // Pass JFrame
+        // Create all the panels and pass the necessary services
+        LoginPanel loginPanel = new LoginPanel(loginService);
+        MainMenuPanel mainMenuPanel = new MainMenuPanel(cardLayout, mainPanel);
         InventoryManagementPanel inventoryPanel = new InventoryManagementPanel(inventoryService);
-        OrderManagementPanel orderPanel = new OrderManagementPanel(orderService, menuService, cardLayout, mainPanel); // Pass OrderService and MenuService to OrderManagementPanel
-        MenuManagementPanel menuPanel = new MenuManagementPanel(frame, cardLayout, mainPanel, currentUser);
-        ReportPanel reportPanel = new ReportPanel(reportService, inventoryService, orderService, menuService, cardLayout, mainPanel);
-        StaffManagementPanel staffPanel = new StaffManagementPanel(userService, cardLayout, mainPanel); // Pass UserService, CardLayout, and MainPanel
-        TableManagementPanel tablePanel = new TableManagementPanel(tableService, cardLayout, mainPanel); // Pass TableService
+        OrderManagementPanel orderPanel = new OrderManagementPanel();
+        MenuManagementPanel menuPanel = new MenuManagementPanel();
+        ReportPanel reportPanel = new ReportPanel();
+        StaffManagementPanel staffPanel = new StaffManagementPanel();
+        TableManagementPanel tablePanel = new TableManagementPanel();
 
         // Add all panels to the main panel (CardLayout)
         mainPanel.add(loginPanel, "Login");
         mainPanel.add(mainMenuPanel, "MainMenu");
         mainPanel.add(inventoryPanel, "Inventory");
-        mainPanel.add(orderPanel, "Orders");  // Add OrderManagementPanel here
+        mainPanel.add(orderPanel, "Orders");
         mainPanel.add(menuPanel, "Menu");
         mainPanel.add(reportPanel, "Reports");
         mainPanel.add(staffPanel, "Staff");
@@ -66,28 +58,27 @@ public class RestaurantManagementSystem {
 
         // Handle login button action in LoginPanel to navigate to Main Menu
         loginPanel.loginButton.addActionListener(e -> {
-            String username = loginPanel.usernameField.getText();
-            String password = new String(loginPanel.passwordField.getPassword());
-            currentUser = loginService.login(username, password);
-
-            if (currentUser != null) {
-                // Update MainMenuPanel with the authenticated user
-                MainMenuPanel newMainMenuPanel = new MainMenuPanel(frame, cardLayout, mainPanel, currentUser, inventoryService);
-                mainPanel.add(newMainMenuPanel, "MainMenu");
-
-                // Show the main menu panel after successful login
+            User authenticatedUser = loginService.login(loginPanel.usernameField.getText(), new String(loginPanel.passwordField.getPassword()));
+            if (authenticatedUser != null) {
                 cardLayout.show(mainPanel, "MainMenu");
+                // You might want to pass the authenticated user to the MainMenuPanel or store it somewhere
             } else {
                 JOptionPane.showMessageDialog(frame, "Invalid credentials!", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
         });
+
+        // Handle navigation buttons in MainMenuPanel to switch between different panels
+        mainMenuPanel.menuManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Menu"));
+        mainMenuPanel.orderManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Orders"));
+        mainMenuPanel.reportButton.addActionListener(e -> cardLayout.show(mainPanel, "Reports"));
+        mainMenuPanel.inventoryManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Inventory"));
+        mainMenuPanel.staffManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Staff"));
+        mainMenuPanel.tableManagementButton.addActionListener(e -> cardLayout.show(mainPanel, "Tables"));
+        mainMenuPanel.logoutButton.addActionListener(e -> cardLayout.show(mainPanel, "Login"));
     }
 
     public static void main(String[] args) {
         // Launch the application on the Event Dispatch Thread
-        SwingUtilities.invokeLater(RestaurantManagementSystem::new);
+        SwingUtilities.invokeLater(() -> new RestaurantManagementSystem());
     }
 }
-
-
-

@@ -2,6 +2,7 @@ package com.restaurant.ui;
 
 import com.restaurant.model.User;
 import com.restaurant.service.LoginService;
+import com.restaurant.service.UserService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,25 +11,15 @@ public class LoginPanel extends JPanel {
     public JTextField usernameField;
     public JPasswordField passwordField;
     public JButton loginButton, resetButton;
-    private JLabel statusLabel;
+    private JLabel statusLabel, logoLabel;
     private LoginService loginService;
 
-    public LoginPanel(JFrame frame, LoginService loginService) {
+    public LoginPanel(LoginService loginService) {
         this.loginService = loginService; // Inject LoginService
 
         // Set the layout to GridBagLayout for flexibility in positioning components
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-
-        // Add the logo image above the form
-        ImageIcon logoIcon = new ImageIcon(getClass().getClassLoader().getResource("restologo.png")); // Load the image from resources
-        JLabel logoLabel = new JLabel(logoIcon);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2; // Span across both columns
-        gbc.insets = new Insets(10, 10, 20, 10); // Add some padding below the image
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(logoLabel, gbc);
 
         // Initialize components
         usernameField = new JTextField(15);
@@ -40,7 +31,6 @@ public class LoginPanel extends JPanel {
         // Layout setup for username, password, and buttons
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 1; // Reset to single column
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.EAST;
         add(new JLabel("Username:"), gbc);
@@ -88,12 +78,13 @@ public class LoginPanel extends JPanel {
         String password = new String(passwordField.getPassword());
 
         // Check with LoginService
-        User authenticatedUser = loginService.login(username, password);
-        if (authenticatedUser != null) { // User authenticated
+        User user = loginService.login(username, password);
+        if (user != null) {
             statusLabel.setText("Login successful!");
             // Trigger navigation to the main menu or next panel
-            // This can be done by calling a method in the parent window that handles the panel switching
-        } else { // Invalid credentials
+            // You need to notify the main system to switch panels
+            // You might want to pass the user object to the next panel or store it somewhere
+        } else {
             statusLabel.setText("Invalid username or password.");
         }
     }
@@ -104,4 +95,3 @@ public class LoginPanel extends JPanel {
         statusLabel.setText("Please enter your credentials.");
     }
 }
-
