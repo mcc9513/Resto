@@ -56,6 +56,14 @@ public class Order {
         }
         return 0.0;
     }
+    public MenuItem getMenuItemByName(MenuService menuService,String name) {
+        MenuItem menuItem = menuService.getMenuItemByName(name);
+        return menuItem;
+    }
+
+    public MenuItem getMenuItemObject (MenuService menuService) {
+        return menuService.getMenuItemByName(this.menuItem);
+    }
 }
 
 

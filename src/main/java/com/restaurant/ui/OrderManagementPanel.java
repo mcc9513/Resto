@@ -29,8 +29,8 @@ public class OrderManagementPanel extends JPanel {
         // Set layout for the panel
         setLayout(new BorderLayout());
 
-        // Create table model with column names, now including Status
-        tableModel = new DefaultTableModel(new String[]{"Order ID", "Table ID", "Menu Item", "Quantity", "Status"}, 0);
+        // Create table model with column names
+        tableModel = new DefaultTableModel(new String[]{"Order ID", "Table ID", "Menu Item", "Quantity"}, 0);
         orderTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(orderTable);
         add(scrollPane, BorderLayout.CENTER);
@@ -51,11 +51,6 @@ public class OrderManagementPanel extends JPanel {
             }
         });
         buttonPanel.add(createOrderButton);
-
-        // Button to update order status
-        JButton updateStatusButton = new JButton("Update Status");
-        updateStatusButton.addActionListener(e -> updateOrderStatus());
-        buttonPanel.add(updateStatusButton);
 
         // Button to delete an order
         JButton deleteOrderButton = new JButton("Delete Order");
@@ -85,17 +80,11 @@ public class OrderManagementPanel extends JPanel {
         tableModel.setRowCount(0); // Clear existing rows
         List<Order> orders = orderService.getAllOrders();
         for (Order order : orders) {
-            tableModel.addRow(new Object[]{
-                    order.getOrderId(),
-                    order.getTableId(),
-                    order.getMenuItem(),
-                    order.getQuantity(),
-                    order.getStatus() // Add status to the table
-            });
+            tableModel.addRow(new Object[]{order.getOrderId(), order.getTableId(), order.getMenuItem(), order.getQuantity()});
         }
     }
 
-    // Create a new order with dropdowns for table ID, menu items, and status
+    // Create a new order with dropdowns for table ID and menu items
     private void createOrder() throws IOException {
         // Dropdown for Table ID (1-13)
         Integer[] tableIds = IntStream.rangeClosed(1, 13).boxed().toArray(Integer[]::new);
@@ -105,10 +94,6 @@ public class OrderManagementPanel extends JPanel {
         List<MenuItem> menuItems = menuService.loadMenuItems();
         String[] menuItemNames = menuItems.stream().map(MenuItem::getName).toArray(String[]::new);
         JComboBox<String> menuItemDropdown = new JComboBox<>(menuItemNames);
-
-        // Dropdown for Status (Waiting/Served)
-        String[] statusOptions = {"Waiting", "Served"};
-        JComboBox<String> statusDropdown = new JComboBox<>(statusOptions);
 
         // Field for quantity
         JTextField quantityField = new JTextField();
@@ -120,8 +105,6 @@ public class OrderManagementPanel extends JPanel {
         panel.add(menuItemDropdown);
         panel.add(new JLabel("Quantity:"));
         panel.add(quantityField);
-        panel.add(new JLabel("Status:"));  // Label for status
-        panel.add(statusDropdown);         // Dropdown for status
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Create New Order", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
@@ -129,38 +112,17 @@ public class OrderManagementPanel extends JPanel {
             try {
                 int tableId = (int) tableIdDropdown.getSelectedItem();
                 String menuItem = (String) menuItemDropdown.getSelectedItem();
+                MenuItem myitem= menuService.getMenuItemByName(menuItem);
                 int quantity = Integer.parseInt(quantityField.getText().trim());
-                String status = (String) statusDropdown.getSelectedItem();  // Get the selected status
 
                 // Create new order and add it
                 int orderId = orderService.getNextOrderId();  // Generate a new order ID
-                Order newOrder = new Order(orderId, tableId, menuItem, quantity, status); // Add status to order
-                orderService.addOrder(newOrder);
+                Order newOrder = new Order(orderId, tableId, menuItem, quantity, "waiting");
+                orderService.addOrder(newOrder, menuService);
                 loadOrderData();  // Reload the table
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid input for quantity.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }
-    }
-
-    // Update the status of the selected order
-    private void updateOrderStatus() {
-        int selectedRow = orderTable.getSelectedRow();
-        if (selectedRow >= 0) {
-            int orderId = (int) tableModel.getValueAt(selectedRow, 0);
-            String[] statusOptions = {"Waiting", "Served"};
-            String newStatus = (String) JOptionPane.showInputDialog(
-                    this, "Select Status:", "Update Status",
-                    JOptionPane.QUESTION_MESSAGE, null, statusOptions, statusOptions[0]);
-
-            if (newStatus != null) {
-                Order order = orderService.getOrder(orderId);
-                order.setStatus(newStatus); // Set the new status
-                orderService.updateOrder(orderId, order);
-                loadOrderData();  // Refresh table data
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select an order to update the status.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -179,6 +141,5 @@ public class OrderManagementPanel extends JPanel {
         }
     }
 }
-
 
 

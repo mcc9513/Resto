@@ -26,6 +26,12 @@ public class InventoryItem {
         this.price = price;
     } // Not tested. Need to find its usage to test fully
 
+    public InventoryItem(String itemName, int quantity, int threshold) {
+        this.itemName = itemName;
+        this.quantity = quantity;
+        this.threshold = threshold;
+    }
+
     // Method to add stock
     public void addStock(int amount) {
         this.quantity += amount;
