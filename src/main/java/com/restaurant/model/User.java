@@ -18,16 +18,6 @@ public class User {
         this.hoursWorked = hoursWorked;
     }
 
-    // Overloaded constructor for cases when role is not passed (you can adjust accordingly)
-    public User(int id, String username, String passwordHash, String firstNameLastInitial, double hoursWorked) {
-        this.id = id;
-        this.username = username;
-        this.passwordHash = passwordHash;
-        this.firstNameLastInitial = firstNameLastInitial;
-        this.role = "User";  // Default role if not provided
-        this.hoursWorked = hoursWorked;
-    }
-
     // Getters and Setters
     public int getId() {
         return id;
@@ -35,10 +25,6 @@ public class User {
 
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPasswordHash() {  // Renamed this method
@@ -53,24 +39,13 @@ public class User {
         return firstNameLastInitial;
     }
 
-    public void setFirstNameLastInitial(String firstNameLastInitial) {
-        this.firstNameLastInitial = firstNameLastInitial;
-    }
 
     public String getRole() {
         return role;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public double getHoursWorked() {
         return hoursWorked;
-    }
-
-    public void setHoursWorked(double hoursWorked) {
-        this.hoursWorked = hoursWorked;
     }
 
     // Convert User to CSV format

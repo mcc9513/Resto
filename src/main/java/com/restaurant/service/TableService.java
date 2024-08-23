@@ -56,10 +56,5 @@ public class TableService {
         table.setStatus("Open");  // Reset status to "Open"
         table.setCustomerName(null);  // Remove the customer name
     }
-
-    // Get a table by its ID
-    public Table getTable(int tableId) {
-        return tables.get(tableId);
-    }
 }
 

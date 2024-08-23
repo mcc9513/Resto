@@ -26,27 +26,6 @@ public class OrderService {
         saveOrdersToCSV();  // Save to CSV after adding
     }
 
-    // Update an existing order
-    public void updateOrder(int orderId, Order updatedOrder) {
-        for (int i = 0; i < orders.size(); i++) {
-            if (orders.get(i).getOrderId() == orderId) {
-                orders.set(i, updatedOrder);
-                break;
-            }
-        }
-        saveOrdersToCSV();  // Save to CSV after updating
-    }
-
-    // Get a specific order by ID
-    public Order getOrder(int orderId) {
-        for (Order order : orders) {
-            if (order.getOrderId() == orderId) {
-                return order;
-            }
-        }
-        return null;
-    }
-
     // Delete an order by ID
     public void deleteOrder(int orderId) {
         orders.removeIf(order -> order.getOrderId() == orderId);

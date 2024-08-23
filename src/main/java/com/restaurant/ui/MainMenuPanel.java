@@ -108,9 +108,4 @@ public class MainMenuPanel extends JPanel {
             }
         });
     }
-
-    // Method to set the current user after login
-    public void setCurrentUser(User user) {
-        this.currentUser = user;
-    }
 }

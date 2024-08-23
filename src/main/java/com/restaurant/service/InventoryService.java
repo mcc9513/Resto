@@ -31,18 +31,6 @@ public class InventoryService {
         return saveAllItemsToCSV(items); // Save the list back to CSV
     }
 
-    // Method to add an item directly to the CSV (for addItemToCSV functionality)
-    public static boolean addItemToCSV(InventoryItem item) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("inventory.csv", true))) {
-            bw.write(item.toCSV());
-            bw.newLine();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     // Method to update an existing inventory item (rewrites the CSV)
     public boolean updateInventoryItem(InventoryItem item) {
         List<InventoryItem> items = getAllInventoryItems();
@@ -78,37 +66,6 @@ public class InventoryService {
             e.printStackTrace();
         }
         return items;
-    }
-
-    // Get the total quantity of items in the inventory
-    public int getTotalInventoryCount() {
-        List<InventoryItem> items = getAllInventoryItems();
-        int totalQuantity = 0;
-        for (InventoryItem item : items) {
-            totalQuantity += item.getQuantity();
-        }
-        return totalQuantity;
-    }
-
-    // Get the total value of the inventory (sum of price * quantity)
-    public double getTotalInventoryValue() {
-        List<InventoryItem> items = getAllInventoryItems();
-        double totalValue = 0;
-        for (InventoryItem item : items) {
-            totalValue += item.getQuantity() * item.getPrice();
-        }
-        return totalValue;
-    }
-
-    // Get an inventory item by its name
-    public InventoryItem getInventoryItemByName(String itemName) {
-        List<InventoryItem> items = getAllInventoryItems();
-        for (InventoryItem item : items) {
-            if (item.getItemName().equalsIgnoreCase(itemName)) {
-                return item;
-            }
-        }
-        return null;
     }
 
     // Save the list of inventory items back to CSV

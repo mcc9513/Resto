@@ -1,7 +1,7 @@
 package com.restaurant.model;
 
 import com.restaurant.service.MenuService;
-import com.restaurant.model.MenuItem;
+
 
 public class Order {
     private int orderId;
@@ -37,11 +37,6 @@ public class Order {
     public int getTableId() { return tableId; }
     public String getMenuItem() { return menuItem; }
     public int getQuantity() { return quantity; }
-
-    public void setOrderId(int orderId) { this.orderId = orderId; }
-    public void setTableId(int tableId) { this.tableId = tableId; }
-    public void setMenuItem(String menuItem) { this.menuItem = menuItem; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
 
     // Method to calculate the total price of the order
     public double getTotalPrice(MenuService menuService) {
