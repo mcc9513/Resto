@@ -1,9 +1,8 @@
 package com.restaurant.ui;
 
 import com.restaurant.model.User;
-import com.restaurant.service.InventoryService;
-import com.restaurant.service.LoginService;
-import com.restaurant.service.UserService;
+import com.restaurant.service.*;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,6 +13,8 @@ public class RestaurantManagementSystem {
     private LoginService loginService;
     private InventoryService inventoryService;
     private UserService userService;
+    private TableService tableService;
+    private OrderService orderService;  // Add OrderService
     private User currentUser;
 
     public RestaurantManagementSystem() {
@@ -21,6 +22,8 @@ public class RestaurantManagementSystem {
         inventoryService = new InventoryService();
         loginService = new LoginService();
         userService = new UserService();
+        tableService = new TableService();
+        orderService = new OrderService();  // Initialize OrderService
 
         // Set up the main JFrame
         frame = new JFrame("Restaurant Management System");
@@ -32,20 +35,22 @@ public class RestaurantManagementSystem {
         mainPanel = new JPanel(cardLayout);
 
         // Create all the panels and pass JFrame to those that require it
+        OrderService orderService = new OrderService();
+        MenuService menuService = new MenuService();
         LoginPanel loginPanel = new LoginPanel(frame, loginService);  // Pass JFrame and LoginService
         MainMenuPanel mainMenuPanel = new MainMenuPanel(frame, cardLayout, mainPanel, currentUser, inventoryService); // Pass JFrame
         InventoryManagementPanel inventoryPanel = new InventoryManagementPanel(inventoryService);
-        OrderManagementPanel orderPanel = new OrderManagementPanel();
+        OrderManagementPanel orderPanel = new OrderManagementPanel(orderService, menuService, cardLayout, mainPanel); // Pass OrderService to OrderManagementPanel
         MenuManagementPanel menuPanel = new MenuManagementPanel(frame, cardLayout, mainPanel, currentUser);
         ReportPanel reportPanel = new ReportPanel();
         StaffManagementPanel staffPanel = new StaffManagementPanel(userService, cardLayout, mainPanel); // Pass userService, cardLayout, and mainPanel
-        TableManagementPanel tablePanel = new TableManagementPanel();
+        TableManagementPanel tablePanel = new TableManagementPanel(tableService, cardLayout, mainPanel); // Pass TableService
 
         // Add all panels to the main panel (CardLayout)
         mainPanel.add(loginPanel, "Login");
         mainPanel.add(mainMenuPanel, "MainMenu");
         mainPanel.add(inventoryPanel, "Inventory");
-        mainPanel.add(orderPanel, "Orders");
+        mainPanel.add(orderPanel, "Orders");  // Add OrderManagementPanel here
         mainPanel.add(menuPanel, "Menu");
         mainPanel.add(reportPanel, "Reports");
         mainPanel.add(staffPanel, "Staff");
@@ -82,5 +87,6 @@ public class RestaurantManagementSystem {
         SwingUtilities.invokeLater(RestaurantManagementSystem::new);
     }
 }
+
 
 

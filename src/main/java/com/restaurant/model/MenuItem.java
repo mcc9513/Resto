@@ -22,6 +22,12 @@ public class MenuItem {
         this.ingredients = new ArrayList<>(ingredients);
     }
 
+    public MenuItem(String name, double price, List<String> ingredients ) {
+        this.name = name;
+        this.price = price;
+        this.ingredients = new ArrayList<>(ingredients);
+    }
+
     // Getter methods
     public String getName() {
         return name;

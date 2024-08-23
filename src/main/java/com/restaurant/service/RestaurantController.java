@@ -14,55 +14,37 @@ public class RestaurantController {
         this.inventory = new HashMap<>();
         this.menu = new ArrayList<>();
 
+        // Ensure the necessary CSV files exist before loading data
         ensureCSVFilesExist();
 
+        // Load the data after ensuring the files are created
         loadMenu();
         loadInventory();
     }
 
     private void ensureCSVFilesExist() {
-        File menuFile = new File("menu.csv");
+        // Ensure menu.csv exists
+        File menuFile = new File("Menu.csv");
         if (!menuFile.exists()) {
-            createMenuCSV();
+            System.out.println("Menu.csv does not exist, please create it.");
         }
 
+        // Ensure inventory.csv exists
         File inventoryFile = new File("inventory.csv");
         if (!inventoryFile.exists()) {
-            createInventoryCSV();
-        }
-    }
-
-    private void createMenuCSV() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("menu.csv"))) {
-            bw.write("Item Name,Price,Ingredients");
-            bw.newLine();
-            System.out.println("menu.csv created successfully.");
-        } catch (IOException e) {
-            System.out.println("Error creating menu.csv: " + e.getMessage());
-        }
-    }
-
-    private void createInventoryCSV() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("inventory.csv"))) {
-            bw.write("Item Name,Quantity,Threshold,Price");
-            bw.newLine();
-            // Add default inventory items or leave it empty for further addition
-            // Mock data is left empty for future implementation
-            System.out.println("inventory.csv created successfully.");
-        } catch (IOException e) {
-            System.out.println("Error creating inventory.csv: " + e.getMessage());
+            System.out.println("Inventory.csv does not exist, please create it.");
         }
     }
 
     public void loadMenu() {
-        try (BufferedReader br = new BufferedReader(new FileReader("menu.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("Menu.csv"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("Item Name")) continue; // Skip header line
                 String[] data = line.split(",");
                 String name = data[0];
-                double price = Double.parseDouble(data[1]);
-                List<String> ingredients = Arrays.asList(data[2].split(";"));
+                double price = Double.parseDouble(data[3]);
+                List<String> ingredients = Arrays.asList(data[4].split(";"));
                 menu.add(new MenuItem(name, price, ingredients));
             }
         } catch (IOException e) {
@@ -76,11 +58,10 @@ public class RestaurantController {
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("Item Name")) continue; // Skip header line
                 String[] data = line.split(",");
-                String itemName = data[0];
-                int quantity = Integer.parseInt(data[1]);
-                int threshold = Integer.parseInt(data[2]);
-                double price = Double.parseDouble(data[3]);
-                inventory.put(itemName, new InventoryItem(itemName, quantity, threshold, price));
+                String itemName = data[1];
+                int quantity = Integer.parseInt(data[2]);
+                int threshold = Integer.parseInt(data[3]);
+                inventory.put(itemName, new InventoryItem(itemName, quantity, threshold));
             }
         } catch (IOException e) {
             System.out.println("Error loading inventory: " + e.getMessage());
@@ -113,14 +94,16 @@ public class RestaurantController {
         boolean allItemsAvailable = true;
 
         for (MenuItem menuItem : orderedItems) {
-            InventoryItem inventoryItem = inventory.get(menuItem.getName());
-            if (inventoryItem != null) {
-                if (!inventoryItem.reduceStock(1)) {
+            for (String ingredient : menuItem.getIngredients()) {
+                InventoryItem inventoryItem = inventory.get(ingredient);
+                if (inventoryItem != null) {
+                    if (!inventoryItem.reduceStock(1)) {
+                        allItemsAvailable = true;
+                    }
+                } else {
+                    System.out.println("Inventory item for " + ingredient + " not found.");
                     allItemsAvailable = false;
                 }
-            } else {
-                System.out.println("Inventory item for " + menuItem.getName() + " not found.");
-                allItemsAvailable = false;
             }
         }
 

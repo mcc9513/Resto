@@ -1,57 +1,105 @@
 package com.restaurant.service;
 
 import com.restaurant.model.Order;
-import com.restaurant.model.MenuItem;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderService {
-    private Map<Integer, Order> orders; // Manage orders by their ID
+    private List<Order> orders = new ArrayList<>();
+    private final String csvFilePath = "orders.csv";  // Path to the orders CSV file
 
     public OrderService() {
-        this.orders = new HashMap<>();
+        // Load existing orders from the CSV file at initialization
+        loadOrdersFromCSV();
     }
 
-    // Create a new order
-    public Order createOrder(int orderId, int tableId) {
-        if (orders.containsKey(orderId)) {
-            throw new IllegalStateException("Order with this ID already exists.");
+    // Fetch all orders
+    public List<Order> getAllOrders() {
+        return orders;
+    }
+
+    // Add a new order
+    public void addOrder(Order order) {
+        orders.add(order);
+        saveOrdersToCSV();  // Save to CSV after adding
+    }
+
+    // Update an existing order
+    public void updateOrder(int orderId, Order updatedOrder) {
+        for (int i = 0; i < orders.size(); i++) {
+            if (orders.get(i).getOrderId() == orderId) {
+                orders.set(i, updatedOrder);
+                break;
+            }
         }
-        Order newOrder = new Order(orderId, tableId);
-        orders.put(orderId, newOrder);
-        return newOrder;
+        saveOrdersToCSV();  // Save to CSV after updating
     }
 
-    // Add an item to an order
-    public void addItemToOrder(int orderId, MenuItem item) {
-        Order order = orders.get(orderId);
-        if (order == null) {
-            throw new IllegalArgumentException("Order does not exist.");
-        }
-        order.addItem(item);
-    }
-
-    // Remove an item from an order
-    public boolean removeItemFromOrder(int orderId, MenuItem item) {
-        Order order = orders.get(orderId);
-        if (order == null) {
-            throw new IllegalArgumentException("Order does not exist.");
-        }
-        return order.removeItem(item);
-    }
-
-    // Update the status of an order
-    public void updateOrderStatus(int orderId, String status) {
-        Order order = orders.get(orderId);
-        if (order == null) {
-            throw new IllegalArgumentException("Order does not exist.");
-        }
-        order.setStatus(status);
-    }
-
-    // Get an order by its ID
+    // Get a specific order by ID
     public Order getOrder(int orderId) {
-        return orders.get(orderId);
+        for (Order order : orders) {
+            if (order.getOrderId() == orderId) {
+                return order;
+            }
+        }
+        return null;
+    }
+
+    // Delete an order by ID
+    public void deleteOrder(int orderId) {
+        orders.removeIf(order -> order.getOrderId() == orderId);
+        saveOrdersToCSV();  // Save to CSV after deleting
+    }
+
+    // Generate the next available Order ID
+    public int getNextOrderId() {
+        int maxId = 0;
+        for (Order order : orders) {
+            if (order.getOrderId() > maxId) {
+                maxId = order.getOrderId();
+            }
+        }
+        return maxId + 1;
+    }
+
+    // Save all orders to CSV file
+    private void saveOrdersToCSV() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvFilePath))) {
+            // Write header
+            bw.write("OrderID,TableID,MenuItem,Quantity");
+            bw.newLine();
+            // Write each order
+            for (Order order : orders) {
+                bw.write(order.toCSV());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Load all orders from CSV file
+    private void loadOrdersFromCSV() {
+        File file = new File(csvFilePath);
+        if (!file.exists()) {
+            return;  // If file doesn't exist, there's nothing to load
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+            String line;
+            boolean isFirstLine = true;
+            while ((line = br.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;  // Skip the header
+                    continue;
+                }
+                Order order = Order.fromCSV(line);
+                orders.add(order);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

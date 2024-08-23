@@ -11,7 +11,7 @@ import java.util.List;
  * Supports adding, editing, and deleting items, with changes saved between sessions.
  */
 public class MenuService {
-    private static final String MENU_FILE = "Resto/Menu.csv";
+    private static final String MENU_FILE = "Menu.csv";
 
     // Adds a new MenuItem and saves it to the CSV file.
     public void addMenuItem(MenuItem item) throws IOException {
