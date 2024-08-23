@@ -67,7 +67,7 @@ public class InventoryManagementPanel extends JPanel {
     }
 
     // Add new item method (You can add more detailed dialog input fields)
-    private void addItem() {
+    void addItem() {
         String itemName = JOptionPane.showInputDialog("Enter item name:");
         String quantityStr = JOptionPane.showInputDialog("Enter quantity:");
         String thresholdStr = JOptionPane.showInputDialog("Enter threshold:");
@@ -112,7 +112,7 @@ public class InventoryManagementPanel extends JPanel {
     }
 
     // Delete selected item method
-    private void deleteItem() {
+    void deleteItem() {
         int selectedRow = inventoryTable.getSelectedRow();
         if (selectedRow >= 0) {
             int itemId = (int) inventoryTable.getValueAt(selectedRow, 0);

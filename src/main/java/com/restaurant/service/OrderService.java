@@ -26,6 +26,27 @@ public class OrderService {
         saveOrdersToCSV();  // Save to CSV after adding
     }
 
+    // Update an existing order by ID
+    public void updateOrder(int orderId, Order updatedOrder) {
+        for (int i = 0; i < orders.size(); i++) {
+            if (orders.get(i).getOrderId() == orderId) {
+                orders.set(i, updatedOrder);
+                break;
+            }
+        }
+        saveOrdersToCSV();  // Save to CSV after updating
+    }
+
+    // Get a specific order by ID
+    public Order getOrder(int orderId) {
+        for (Order order : orders) {
+            if (order.getOrderId() == orderId) {
+                return order;
+            }
+        }
+        return null;
+    }
+
     // Delete an order by ID
     public void deleteOrder(int orderId) {
         orders.removeIf(order -> order.getOrderId() == orderId);
@@ -47,7 +68,7 @@ public class OrderService {
     private void saveOrdersToCSV() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvFilePath))) {
             // Write header
-            bw.write("OrderID,TableID,MenuItem,Quantity");
+            bw.write("OrderID,TableID,MenuItem,Quantity,Status"); // Include Status in header
             bw.newLine();
             // Write each order
             for (Order order : orders) {
@@ -74,7 +95,7 @@ public class OrderService {
                     isFirstLine = false;  // Skip the header
                     continue;
                 }
-                Order order = Order.fromCSV(line);
+                Order order = Order.fromCSV(line); // Load the order, including status
                 orders.add(order);
             }
         } catch (IOException e) {
@@ -82,3 +103,4 @@ public class OrderService {
         }
     }
 }
+

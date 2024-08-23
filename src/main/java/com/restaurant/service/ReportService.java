@@ -13,7 +13,7 @@ public class ReportService {
     }
 
     // Helper method to get the price of a menu item from the inventory
-    private double getMenuItemPrice(String menuItemName) {
+    double getMenuItemPrice(String menuItemName) {
         List<InventoryItem> inventory = inventoryService.getAllInventoryItems();
         for (InventoryItem item : inventory) {
             if (item.getItemName().equals(menuItemName)) {

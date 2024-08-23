@@ -24,7 +24,7 @@ public class InventoryItem {
         this.quantity = quantity;
         this.threshold = threshold;
         this.price = price;
-    }
+    } // Not tested. Need to find its usage to test fully
 
     // Method to add stock
     public void addStock(int amount) {
