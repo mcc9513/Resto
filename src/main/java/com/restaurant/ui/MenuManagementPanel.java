@@ -3,6 +3,8 @@ package com.restaurant.ui;
 import com.restaurant.model.MenuItem;
 import com.restaurant.service.MenuService;
 import com.restaurant.model.User;
+import com.restaurant.service.RestaurantController;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -17,6 +19,7 @@ public class MenuManagementPanel extends JPanel {
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private User currentUser;
+    private RestaurantController controller;
 
     // Constructor with necessary arguments
     public MenuManagementPanel(JFrame parentFrame, CardLayout cardLayout, JPanel mainPanel, User currentUser) {
@@ -24,6 +27,7 @@ public class MenuManagementPanel extends JPanel {
         this.cardLayout = cardLayout;
         this.mainPanel = mainPanel;
         this.currentUser = currentUser;
+        this.controller = controller;
 
         // Initialize MenuService for handling CSV operations
         menuService = new MenuService();

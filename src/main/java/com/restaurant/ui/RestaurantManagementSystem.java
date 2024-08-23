@@ -15,6 +15,8 @@ public class RestaurantManagementSystem {
     private UserService userService;
     private TableService tableService;
     private OrderService orderService;  // Add OrderService
+    private MenuService menuService;
+    private RestaurantController controller;
     private User currentUser;
 
     public RestaurantManagementSystem() {
@@ -27,6 +29,7 @@ public class RestaurantManagementSystem {
         MenuService menuService = new MenuService();  // Initialize MenuService
         ReportService reportService = new ReportService(orderService, inventoryService);
 
+        controller = new RestaurantController();
 
         // Set up the main JFrame
         frame = new JFrame("Restaurant Management System");
@@ -46,6 +49,7 @@ public class RestaurantManagementSystem {
         ReportPanel reportPanel = new ReportPanel(reportService, inventoryService, orderService, menuService, cardLayout, mainPanel);
         StaffManagementPanel staffPanel = new StaffManagementPanel(userService, cardLayout, mainPanel); // Pass UserService, CardLayout, and MainPanel
         TableManagementPanel tablePanel = new TableManagementPanel(tableService, cardLayout, mainPanel); // Pass TableService
+        RestaurantController controller = new RestaurantController();
 
         // Add all panels to the main panel (CardLayout)
         mainPanel.add(loginPanel, "Login");

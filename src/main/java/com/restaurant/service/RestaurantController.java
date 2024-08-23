@@ -14,18 +14,21 @@ public class RestaurantController {
         this.inventory = new HashMap<>();
         this.menu = new ArrayList<>();
 
+        // Ensure the necessary CSV files exist before loading data
         ensureCSVFilesExist();
 
+        // Load the data after ensuring the files are created
         loadMenu();
         loadInventory();
     }
 
     private void ensureCSVFilesExist() {
-        File menuFile = new File("menu.csv");
+        File menuFile = new File("Menu.csv");
         if (!menuFile.exists()) {
             createMenuCSV();
         }
 
+        // Ensure inventory.csv exists
         File inventoryFile = new File("inventory.csv");
         if (!inventoryFile.exists()) {
             createInventoryCSV();
@@ -93,7 +96,7 @@ public class RestaurantController {
             bw.write("Item Name,Quantity,Threshold,Price");
             bw.newLine();
             for (InventoryItem item : inventory.values()) {
-                bw.write(item.getItemName() + "," + item.getQuantity() + "," + item.getThreshold() + "," + item.getPrice());
+                bw.write(item.toCSV());
                 bw.newLine();
             }
         } catch (IOException e) {

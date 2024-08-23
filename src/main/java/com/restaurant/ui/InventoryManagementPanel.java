@@ -2,6 +2,7 @@ package com.restaurant.ui;
 
 import com.restaurant.model.InventoryItem;
 import com.restaurant.service.InventoryService;
+import com.restaurant.service.RestaurantController;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,9 +14,11 @@ public class InventoryManagementPanel extends JPanel {
     private InventoryService inventoryService;
     private JTable inventoryTable;
     private DefaultTableModel tableModel;
+    private RestaurantController controller;
 
     public InventoryManagementPanel(InventoryService inventoryService) {
         this.inventoryService = inventoryService;
+        this.controller = controller;
         setLayout(new BorderLayout());
 
         // Create table for inventory
