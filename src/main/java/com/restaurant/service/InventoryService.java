@@ -94,27 +94,34 @@ public class InventoryService {
     }
 
     public void reduceIngredientsForMenuItem(MenuItem menuItem) {
+        List<InventoryItem> items = getAllInventoryItems();
         List<String> ingredients = menuItem.getIngredients();
 
+
         for (String ingredient : ingredients) {
-            // TODO: REPLACE getItemByName() with method to get the ingredient
-            InventoryItem inventoryItem = getItemByName(ingredient);
-
-            if (inventoryItem != null && inventoryItem.getQuantity() > 0) {
-                inventoryItem.setQuantity(inventoryItem.getQuantity() - 1);
-
-                // Optional: If quantity reaches 0, you could log it or notify the user
-                if (inventoryItem.getQuantity() <= 0) {
-                    System.out.println("Ingredient " + ingredient + " is out of stock.");
+            for (InventoryItem i : items) {
+                if (i.getItemName().equalsIgnoreCase(ingredient)) {
+                    i.setQuantity(i.getQuantity() - 1);
+                    break;
                 }
-            } else {
-                // Handle case where ingredient is not found or already at 0 quantity
-                System.out.println("Ingredient " + ingredient + " is not available or out of stock.");
             }
+//            InventoryItem inventoryItem = getItemByName(ingredient);
+//
+//            if (inventoryItem != null && inventoryItem.getQuantity() > 0) {
+//                inventoryItem.setQuantity(inventoryItem.getQuantity() - 1);
+//
+//                // Optional: If quantity reaches 0, you could log it or notify the user
+//                if (inventoryItem.getQuantity() <= 0) {
+//                    System.out.println("Ingredient " + ingredient + " is out of stock.");
+//                }
+//            } else {
+//                // Handle case where ingredient is not found or already at 0 quantity
+//                System.out.println("Ingredient " + ingredient + " is not available or out of stock.");
+//            }
         }
 
         // Save the updated inventory back to the CSV file
-        saveAllItemsToCSV(getAllInventoryItems());
+        saveAllItemsToCSV(items);
     }
 
 }

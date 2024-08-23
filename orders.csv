@@ -1,1 +1,3 @@
-OrderID,TableID,MenuItem,Quantity
+OrderID,TableID,MenuItem,Quantity,Status
+1,1,null,1,Served
+2,1,com.restaurant.model.MenuItem@39a6be6b,2,Waiting

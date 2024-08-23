@@ -5,14 +5,15 @@ import com.restaurant.service.MenuService;
 public class Order {
     private int orderId;
     private int tableId;
-    private String menuItem;
+    private MenuItem menuItem;
     private int quantity;
     private String status; // Added status field
+    private MenuService menuService = new MenuService();
 
     public Order(int orderId, int tableId, String menuItem, int quantity, String status) {
         this.orderId = orderId;
         this.tableId = tableId;
-        this.menuItem = menuItem;
+        this.menuItem = menuService.getMenuItemByName(menuItem);
         this.quantity = quantity;
         this.status = status; // Initialize status
     }
@@ -37,19 +38,19 @@ public class Order {
     // Getters and setters
     public int getOrderId() { return orderId; }
     public int getTableId() { return tableId; }
-    public String getMenuItem() { return menuItem; }
+    public MenuItem getMenuItem() { return menuItem; }
     public int getQuantity() { return quantity; }
     public String getStatus() { return status; } // Getter for status
 
     public void setOrderId(int orderId) { this.orderId = orderId; }
     public void setTableId(int tableId) { this.tableId = tableId; }
-    public void setMenuItem(String menuItem) { this.menuItem = menuItem; }
+    public void setMenuItem(String menuItem) { this.menuItem = menuService.getMenuItemByName(menuItem); }
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public void setStatus(String status) { this.status = status; } // Setter for status
 
     // Method to calculate the total price of the order
     public double getTotalPrice(MenuService menuService) {
-        MenuItem menuItem = menuService.getMenuItemByName(this.menuItem);
+        MenuItem menuItem = this.menuItem; // menuService.getMenuItemByName(this.menuItem);
         if (menuItem != null) {
             return menuItem.getPrice() * this.quantity;
         }

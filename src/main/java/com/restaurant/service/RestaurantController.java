@@ -64,9 +64,9 @@ public class RestaurantController {
                 if (line.startsWith("Item Name")) continue; // Skip header line
                 String[] data = line.split(",");
                 String name = data[0];
-                double price = Double.parseDouble(data[1]);
-                List<String> ingredients = Arrays.asList(data[2].split(";"));
-                menu.add(new MenuItem(name, price, ingredients));
+                double price = Double.parseDouble(data[3]);
+                List<String> ingredients = Arrays.asList(data[4].split(";"));
+                menu.add(new MenuItem(name, "afsdfa", 5, price, ingredients));
             }
         } catch (IOException e) {
             System.out.println("Error loading menu: " + e.getMessage());
@@ -79,10 +79,10 @@ public class RestaurantController {
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("Item Name")) continue; // Skip header line
                 String[] data = line.split(",");
-                String itemName = data[0];
-                int quantity = Integer.parseInt(data[1]);
-                int threshold = Integer.parseInt(data[2]);
-                double price = Double.parseDouble(data[3]);
+                String itemName = data[1];
+                int quantity = Integer.parseInt(data[2]);
+                int threshold = Integer.parseInt(data[3]);
+                double price = Double.parseDouble(data[4]);
                 inventory.put(itemName, new InventoryItem(itemName, quantity, threshold, price));
             }
         } catch (IOException e) {
